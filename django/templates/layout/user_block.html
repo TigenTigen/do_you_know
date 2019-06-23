@@ -1,0 +1,23 @@
+{% block user_block %}
+  {% load cache %}
+
+  {% cache 300 user_block mykey request.user.id %}
+    <div class="container p-4 text-white">
+      <div class="row">
+        <div class="col">
+          <p class="m-0">Добро пожаловать, {{user.username}}!</p>
+          <p class="m-0">Вы с нами уже {{user.date_joined|timesince}}.</p>
+          <p class="m-0">
+            Понравившиеся
+            <a href="{% url 'core:LikedThemeList' %}" class="text-white">темы,</a>
+            <a href="{% url 'core:LikedMovieList' %}" class="text-white">фильмы,</a>
+            <a href="{% url 'core:LikedBookList' %}" class="text-white">книги</a>
+          </p>
+        </div>
+        <div class="col">
+
+        </div>
+      </div>
+    </div>
+  {% endcache %}
+{% endblock %}

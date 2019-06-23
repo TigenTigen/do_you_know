@@ -1,0 +1,14 @@
+{% block image_upload_form %}
+  <div class="card text-white bg-success mb-3">
+    <div class="card-header">
+      Загрузить изображение
+    </div>
+    <div class="card-body">
+      <form class="" action="{{image_form_url}}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{image_form}}
+        <button type="submit" class="btn btn-sm btn-light btn-block mt-2">Загрузить</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

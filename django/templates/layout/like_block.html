@@ -1,0 +1,61 @@
+{% block like_block %}
+  <div class="card text-white bg-success mb-3">
+    <div class="card-header">
+      Голосование
+    </div>
+    <div class="card-body">
+      {% if like_form %}
+        <form class="" action="{{like_form_url}}" method="post">
+          {% csrf_token %}
+          {{like_form.user}}
+          {% if like_form.theme %}
+            {{like_form.theme}}
+          {% elif like_form.book %}
+            {{like_form.book}}
+          {% elif like_form.movie %}
+            {{like_form.movie}}
+          {% endif %}
+          <div class="d-flex d-row m-0">
+            <button type="submit" name="is_liked" value="True" class="btn bg-transparent text-{{thumb_up_color}} d-inline-flex p-2 flex-fill justify-content-center">
+              <i class="material-icons  mr-3" style="font-size: 48px;">
+                thumb_up
+              </i>
+              <h2>{{object.likes}}</h2>
+            </button>
+            <button type="submit" name="is_liked" value="False" class="btn bg-transparent  text-{{thumb_down_color}} d-inline-flex p-2 flex-fill justify-content-center">
+              <i class="material-icons mr-3" style="font-size: 48px;">
+                thumb_down
+              </i>
+              <h2>{{object.dislikes}}</h2>
+            </button>
+          </div>
+        </form>
+      {% else %}
+      <div class="d-flex d-row m-0">
+        <button type="button" class="btn bg-transparent d-inline-flex p-2 flex-fill justify-content-center">
+          <i class="material-icons  mr-3" style="font-size: 48px;">
+            thumb_up
+          </i>
+          <h2>{{object.likes}}</h2>
+        </button>
+        <button type="button" class="btn bg-transparent d-inline-flex p-2 flex-fill justify-content-center">
+          <i class="material-icons mr-3" style="font-size: 48px;">
+            thumb_down
+          </i>
+          <h2>{{object.dislikes}}</h2>
+        </button>
+      </div>
+      <p class="card-text text-center">Войдите, чтобы проголосовать</p>
+      {% endif %}
+      {% if object.user.all %}
+        <p class="card-text text-center">
+          Проголосовавшие пользователи:
+          <br>
+          {% for user in object.user.all %}
+            {{user.username}}{% if not forloop.last %}, {% else %}.{% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
