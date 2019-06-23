@@ -12,5 +12,7 @@ urlpatterns = [
     path('password_change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),
     # custom paths:
     path('registration/', RegictrationView.as_view(), name='registration'),
+    path('registration/done/', RegictrationDoneView.as_view(), name='registration_done'),
+    path('registration/confirmed/<str:sign>/', registration_confirmation, name='registration_confirmed'),
     path('profile/', ProfileView.as_view(), name='profile'),
 ]

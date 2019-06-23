@@ -10,5 +10,15 @@
     LOGOUT_REDIRECT_URL = None # адрес, на который произойдет перенаправление после выхода
                                # если None, перенаправление не произойдет, будет выведена страница выхода с сайта
 
+    # Mail settings (for registration confirmation emails)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'djangomailape@gmail.com'
+    EMAIL_HOST_PASSWORD = 'letsspam'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    MAILING_LIST_FROM_EMAIL = 'noreply@gmail.com'
+    MAILING_LIST_LINK_DOMAIN = 'http://127.0.0.1:8000'
+
 3. Добавить в файл urls следующий маршрут:
     path('accounts/', include('user.urls', namespace='user'))

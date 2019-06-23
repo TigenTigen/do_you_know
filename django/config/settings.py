@@ -140,8 +140,18 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # user settings
 INSTALLED_APPS += ['user.apps.UserConfig',]
-AUTH_USER_MODEl = 'user.models.AdvUser'
+AUTH_USER_MODEL = 'user.AdvUser'
 LOGIN_URL = 'accounts/login/' # адрес, ведущий на страницу входа
 LOGIN_REDIRECT_URL = '/accounts/profile' # адрес, на который произойдет перенаправление после входа
 LOGOUT_REDIRECT_URL = None # адрес, на который произойдет перенаправление после выхода
                            # если None, перенаправление не произойдет, будет выведена страница выхода с сайта
+
+# Mail settings (for registration confirmation emails)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'djangomailape@gmail.com'
+EMAIL_HOST_PASSWORD = 'letsspam'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'noreply@do_you_know.com'
+MAILING_LIST_LINK_DOMAIN = 'http://127.0.0.1:8000'
