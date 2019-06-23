@@ -11,4 +11,4 @@
                                # если None, перенаправление не произойдет, будет выведена страница выхода с сайта
 
 3. Добавить в файл urls следующий маршрут:
-    path('accounts/', include('user.urls'))
+    path('accounts/', include('user.urls', namespace='user'))

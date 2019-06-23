@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
-from urls.views import *
+from user.views import *
 
 # comon_prefix: accounts/'
 app_name = 'user'
