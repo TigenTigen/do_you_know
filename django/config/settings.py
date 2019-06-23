@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'user.apps.UserConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -138,3 +137,11 @@ STATIC_URL = '/static/'
 # crispy_forms settings:
 INSTALLED_APPS += ['crispy_forms',]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# user settings
+INSTALLED_APPS += ['user.apps.UserConfig',]
+AUTH_USER_MODEl = 'user.models.AdvUser'
+LOGIN_URL = 'accounts/login/' # адрес, ведущий на страницу входа
+LOGIN_REDIRECT_URL = '/accounts/profile' # адрес, на который произойдет перенаправление после входа
+LOGOUT_REDIRECT_URL = None # адрес, на который произойдет перенаправление после выхода
+                           # если None, перенаправление не произойдет, будет выведена страница выхода с сайта

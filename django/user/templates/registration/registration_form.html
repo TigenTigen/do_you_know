@@ -1,0 +1,15 @@
+{% extends wrapper_path %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <p>Вы уже выполнили регистрацию.</p>
+  {% else %}
+    <form method="post">
+      {% csrf_token %}
+      {{form.as_p}}
+      <button type="submit">Сохранить</button>
+    </form>
+  {% endif %}
+{% endblock %}
