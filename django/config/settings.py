@@ -139,7 +139,7 @@ INSTALLED_APPS += ['crispy_forms',]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # user settings
-INSTALLED_APPS += ['user.apps.UserConfig',]
+INSTALLED_APPS = ['user.apps.UserConfig',] + INSTALLED_APPS
 AUTH_USER_MODEL = 'user.AdvUser'
 LOGIN_URL = 'accounts/login/' # адрес, ведущий на страницу входа
 LOGIN_REDIRECT_URL = '/accounts/profile' # адрес, на который произойдет перенаправление после входа
