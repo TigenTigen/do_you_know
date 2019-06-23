@@ -107,16 +107,27 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Krasnoyarsk'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False # disable datetime and numeric internationalization
 
 USE_TZ = True
 
+# Параметры ввода и вывода дат: задано вручную (при отключении USE_L10N)
+DATE_FORMAT = "d.m.Y"
+DATE_INPUT_FORMATS = ['%d.%m.%Y']
+SHORT_DATE_FORMAT = "d.m.Y"
+
+DATETIME_FORMAT = "d.m.Y H:i:s"
+DATETIME_INPUT_FORMATS = ["%d.%m.%Y %H:%M:%S"]
+SHORT_DATETIME_FORMAT = "d.m.Y H:M:s"
+
+TIME_FORMAT = "H:M"
+TIME_INPUT_FORMATS = ["%H:%M"]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
