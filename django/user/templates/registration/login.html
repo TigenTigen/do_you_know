@@ -3,6 +3,7 @@
 {% block title %}Вход{% endblock %}
 
 {% block content %}
+  <a href="{% url 'social:begin' 'vk-oauth2' %}">Войти через Вконтакте</a>
   {% if user.is_authenticated %}
     <p>Вы уже выполнили вход.</p>
   {% else %}

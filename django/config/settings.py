@@ -155,3 +155,16 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'noreply@do_you_know.com'
 MAILING_LIST_LINK_DOMAIN = 'http://127.0.0.1:8000'
+
+# social-django settings
+INSTALLED_APPS += ['social_django',]
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.backends')
+TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7031159'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'cJRcIxvV9xLPtgg84UeE'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']

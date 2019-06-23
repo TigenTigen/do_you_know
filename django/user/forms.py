@@ -13,6 +13,7 @@ class CustomUserCreationForm(UserCreationForm):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
         user.is_active = False
+        user.send_confirmation_email()
         if commit:
             user.save()
         return user

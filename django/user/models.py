@@ -18,13 +18,16 @@ class AdvUser(AbstractUser):
         ordering = ['username']
 
     def __str__(self):
-        return '{}'.format(self.username)
+        if self.username.startswith('id'):
+            self.username = '{} {}'.format(self.first_name, self.last_name)
+            self.save()
+        return self.username
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         is_new = self._state.adding or force_insert
+        if is_new and self.username.startswith('id'):
+            self.username = '{} {}'.format(self.first_name, self.last_name)
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
-        if is_new:
-            self.send_confirmation_email()
 
     def confirm(self):
         self.is_active = True
