@@ -133,3 +133,7 @@ TIME_INPUT_FORMATS = ["%H:%M"]
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# crispy_forms settings:
+INSTALLED_APPS += ['crispy_forms',]
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
