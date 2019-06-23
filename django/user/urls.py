@@ -12,4 +12,5 @@ urlpatterns = [
     path('password_change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),
     # custom paths:
     path('registration/', RegictrationView.as_view(), name='registration'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]
