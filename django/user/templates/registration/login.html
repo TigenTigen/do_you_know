@@ -1,18 +1,23 @@
 {% extends 'layout/wrapper.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block title %}Вход{% endblock %}
 
 {% block content %}
-  <a href="{% url 'social:begin' 'vk-oauth2' %}">Войти через Вконтакте</a>
+
   {% if user.is_authenticated %}
     <p>Вы уже выполнили вход.</p>
   {% else %}
     <form method="post">
       {% csrf_token %}
-      {{form.as_p}}
+      {{form|crispy}}
       <input type="hidden" name="next" value="{{next}}">
-      <button type="submit">Войти</button>
+      <div>
+        <button type="submit" class="btn btn-success d-inline-block">Войти</button>
+        <a href="{% url 'user:password_reset' %}" class="btn btn-success">Забыли пароль?</a>
+        <a href="{% url 'social:begin' 'vk-oauth2' %}" class="btn btn-primary">Войти через Вконтакте</a>
+      </div>
     </form>
-    <a href="{% url 'user:password_reset' %}">Забыли пароль?</a>
   {% endif %}
 {% endblock %}

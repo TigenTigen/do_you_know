@@ -19,8 +19,9 @@ class AdvUser(AbstractUser):
 
     def __str__(self):
         if self.username.startswith('id'):
-            self.username = '{} {}'.format(self.first_name, self.last_name)
-            self.save()
+            if self.first_name != '' and self.last_name != '':
+                self.username = '{} {}'.format(self.first_name, self.last_name)
+                self.save()
         return self.username
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

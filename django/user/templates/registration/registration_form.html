@@ -1,5 +1,7 @@
 {% extends 'layout/wrapper.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block title %}Регистрация{% endblock %}
 
 {% block content %}
@@ -8,8 +10,8 @@
   {% else %}
     <form method="post">
       {% csrf_token %}
-      {{form.as_p}}
-      <button type="submit">Сохранить</button>
+      {{form|crispy}}
+      <button type="submit" class="btn btn-success">Сохранить</button>
     </form>
   {% endif %}
 {% endblock %}
