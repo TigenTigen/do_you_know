@@ -1,0 +1,13 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+  {% if success %}
+    <p>Регистрация подтверждена.</p>
+    <a href="{% url 'user:login' %}">Войти на сайт</a>
+  {% else %}
+    <p>В ходе регистрации пользователя, произошел сбой.</p>
+    <a href="{% url 'user:registration' %}">Пройти регистрацию повторно</a>
+  {% endif %}
+{% endblock %}

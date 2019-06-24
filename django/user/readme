@@ -1,0 +1,45 @@
+Универсальный блок по работе с пользователями.
+
+Установка:
+1. Скопировать папку с приложением в папку проекта
+2. Добавить в файл настроек settings следующие строки:
+    # user settings
+    INSTALLED_APPS = ['user.apps.UserConfig',] + INSTALLED_APPS
+    AUTH_USER_MODEl = 'user.models.AdvUser'
+    LOGIN_URL = 'accounts/login/' # адрес, ведущий на страницу входа
+    LOGIN_REDIRECT_URL = '/accounts/profile' # адрес, на который произойдет перенаправление после входа
+    LOGOUT_REDIRECT_URL = None # адрес, на который произойдет перенаправление после выхода
+                               # если None, перенаправление не произойдет, будет выведена страница выхода с сайта
+
+    # Mail settings (for registration confirmation emails)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'djangomailape@gmail.com'
+    EMAIL_HOST_PASSWORD = 'letsspam'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    MAILING_LIST_FROM_EMAIL = 'noreply@gmail.com'
+    MAILING_LIST_LINK_DOMAIN = 'http://127.0.0.1:8000'
+
+3. Добавить в файл urls следующий маршрут:
+    path('accounts/', include('user.urls', namespace='user'))
+
+4. Для связи с Вконтакте:
+    1. Добавить в файл requirements модуль social-auth-app-django и запустить его установку
+    2. Добавить в файл настроек settings следующие строки:
+        # social-django settings
+        INSTALLED_APPS += ['social_django',]
+        SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+        AUTHENTICATION_BACKENDS = (
+            'social_core.backends.vk.VKOAuth2',
+            'django.contrib.auth.backends.ModelBackend',
+        )
+        TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.backends')
+        TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
+        SOCIAL_AUTH_VK_OAUTH2_KEY = 'cJRcIxvV9xLPtgg84UeE' !!! укажите свое значение
+        SOCIAL_AUTH_VK_OAUTH2_SECRET = 'da7d0fd0da7d0fd0da7d0fd079da1646a7dda7dda7d0fd08772bc625a66c22964bf6007' !!! укажите свое значение
+        SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email'] !!! при необходимости извлекать адрес электронной почты из ВК
+    3. Добавить в файл urls следующий маршрут:
+        path('social/', include('social_django.urls', namespace='social'))
+    4. Ссылка на регистрацию через ВК (доабавлям в необходимые шаблоны):
+        <a href="{% url 'social:begin' 'vk-oauth2' %}">Войти через Вконтакте</a>

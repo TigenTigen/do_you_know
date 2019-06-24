@@ -137,3 +137,34 @@ STATIC_URL = '/static/'
 # crispy_forms settings:
 INSTALLED_APPS += ['crispy_forms',]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# user settings
+INSTALLED_APPS = ['user.apps.UserConfig',] + INSTALLED_APPS
+AUTH_USER_MODEL = 'user.AdvUser'
+LOGIN_URL = 'accounts/login/' # адрес, ведущий на страницу входа
+LOGIN_REDIRECT_URL = '/accounts/profile' # адрес, на который произойдет перенаправление после входа
+LOGOUT_REDIRECT_URL = None # адрес, на который произойдет перенаправление после выхода
+                           # если None, перенаправление не произойдет, будет выведена страница выхода с сайта
+
+# Mail settings (for registration confirmation emails)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'djangomailape@gmail.com'
+EMAIL_HOST_PASSWORD = 'letsspam'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'noreply@do_you_know.com'
+MAILING_LIST_LINK_DOMAIN = 'http://127.0.0.1:8000'
+
+# social-django settings
+INSTALLED_APPS += ['social_django',]
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.backends')
+TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7031159'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'cJRcIxvV9xLPtgg84UeE'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
