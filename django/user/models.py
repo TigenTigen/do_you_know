@@ -1,8 +1,10 @@
+from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.core.signing import Signer
 from django.template import engines, Context
 from django.urls import reverse
+from django.db.models import Count
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 signer = Signer()
@@ -11,11 +13,16 @@ dt_engine = engines['django'].engine
 # Данная sмодель заменит модель пользователя User, используемую по умолчанию.
 # Данная замена должна быть отражена в настройках проекта: AUTH_USER_MODEL = 'user.models.AdvUser'.
 # Замен производится с целью расширения стандартной модели с помощью дополнительных методов и атрибутов.
+class AdvUserManager(models.Manager):
+    pass
+
 class AdvUser(AbstractUser):
+    objects = AdvUserManager()
+
     class Meta(AbstractUser.Meta):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи (расширенная модель)'
-        ordering = ['username']
+        ordering = ['-date_joined']
 
     def __str__(self):
         if self.username.startswith('id'):
@@ -48,3 +55,6 @@ class AdvUser(AbstractUser):
         text_body = dt_engine.get_template('emails/confirmation.txt').render(context=context)
         html_body = dt_engine.get_template('emails/confirmation.html').render(context=context)
         self.email_user(subject='Подтверждение регистрации', message=text_body, html_message=html_body)
+
+    def social_count(self):
+        return self.social_auth.count()
