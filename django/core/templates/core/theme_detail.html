@@ -1,0 +1,47 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block title %}
+  {{object.title}}
+{% endblock %}
+
+{% block content %}
+  <h1>{{object.title}}</h1>
+  <p>{{object.description}}</p>
+  {% if object.creators.all %}
+    <p class="h-5 m-0">Создатели:
+      {% for creator in object.creators.all %}<a href="{{creator.get_absolute_url}}">{{creator}}</a>{% if not forloop.last %}, {% else %}.{% endif %}{% endfor %}
+    </p>
+  {% endif %}
+  {% if object.cycles.all %}
+    <p class="h-5 m-0">Циклы:</p>
+    <ul>
+      {% for cycle in object.cycles.all %}
+        <li>{{cycle}}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% if object.books.all %}
+    <p class="h-5 m-0">Книги:</p>
+    <ul>
+      {% for book in object.books.all %}
+        <li>
+          <a href="{{book.get_absolute_url}}">
+            {{book}}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% if object.movies.all %}
+    <p class="h-5 m-0">Фильмы:</p>
+    <ul>
+      {% for movie in object.movies.all %}
+        <li>
+          <a href="{{movie.get_absolute_url}}">
+            {{movie}}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

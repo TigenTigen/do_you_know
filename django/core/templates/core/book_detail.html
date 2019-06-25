@@ -1,0 +1,34 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block title %}
+  {{object.title}}
+{% endblock %}
+
+{% block content %}
+  <h1>{{object}}</h1>
+  <p class="h-5 m-0">{{object.get_genre_display|default_if_none:""}}</p>
+  {% for number in object.number_set.all %}
+    <p class="h-5 m-0">{{number|default_if_none:""}}</p>
+  {% endfor %}
+  <p>Сюжет: {{object.plot}}</p>
+  {% if object.author %}
+    <p class="h-5">
+      Автор:
+      <a href="{{object.author.get_absolute_url}}">
+        {{object.author}}
+      </a>
+    </p>
+  {% endif %}
+  {% if object.characters %}
+    <p class="h-5 m-0">Персонажи:</p>
+    <ul>
+      {% for one in object.characters.all %}
+        <li>
+          <a href="{{one.get_absolute_url}}">
+            {{one}}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

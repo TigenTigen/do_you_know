@@ -1,16 +1,16 @@
 {% block horisontal_menu %}
   <ul class="nav justify-content-center">
     <li class="nav-item">
-      <a class="nav-link text-white" href="">Темы</a>
+      <a class="nav-link text-white" href="{% url 'core:theme_list' %}">Темы</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="">Книги</a>
+      <a class="nav-link text-white" href="{% url 'core:book_list'%}">Книги</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="">Фильмы</a>
+      <a class="nav-link text-white" href="{% url 'core:movie_list'%}">Фильмы</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="">Люди</a>
+      <a class="nav-link text-white" href="{% url 'core:person_list'%}">Люди</a>
     </li>
     <li class="nav-item">
       <a class="nav-link text-white" href="">Топ-10</a>

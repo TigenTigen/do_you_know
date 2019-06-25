@@ -1,0 +1,46 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block title %}
+  {{object.title}}
+{% endblock %}
+
+{% block content %}
+  <h1>{{object}}</h1>
+  <p class="h-5 m-0">{{object.get_genre_display|default_if_none:""}}</p>
+  {% for number in object.number_set.all %}
+    <p class="h-5 m-0">{{number|default_if_none:""}}</p>
+  {% endfor %}
+  <p>Сюжет: {{object.plot|default:"Описание отсутсвует"|default_if_none:"Описание отсутсвует"}}</p>
+  {% if object.director %}
+    <p class="h-5">
+      Режисер:
+      <a href="{{object.director.get_absolute_url}}">
+        {{object.director}}
+      </a>
+    </p>
+  {% endif %}
+  {% if object.writer %}
+    <p class="h-5">
+      Автор:
+      <a href="{{object.writer.get_absolute_url}}">
+        {{object.writer}}
+      </a>
+    </p>
+  {% endif %}
+  {% if object.roles.all %}
+    <p class="h-5 m-0">Персонажи:</p>
+    <ul>
+      {% for one in object.roles.all %}
+        <li>
+          <a href="{{one.actor.get_absolute_url}}">
+            {{one.actor}}
+          </a>
+          /
+          <a href="{{one.character.get_absolute_url}}">
+            {{one.character}}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
