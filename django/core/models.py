@@ -1,7 +1,30 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 AUTH_USER_MODEL = get_user_model()
+
+class ValidatableModel(models.Model):
+    target_score = models.SmallIntegerField('Граница одобрения', default=5)
+    approve_score = models.SmallIntegerField('Счетчик одобрения', default=0)
+    is_validated_by_staff = models.BooleanField('Одобрен командой сайта', default=False)
+    is_validated_by_users = models.BooleanField('Одобрен пользовательским голосованием', default=False)
+    proposed = models.DateTimeField('Дата вынесения на обсуждение', auto_now_add=True, null=True, blank=True)
+    validated = models.DateTimeField('Дата одобрения', null=True, blank=True)
+    created_by_user_id = models.SmallIntegerField('Пользователь, создавший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
+    validated_by_staff_id = models.SmallIntegerField('Член команды сайта, одобривший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
+
+    class Meta:
+        abstract = True
+
+    def is_validated(self):
+        return (self.is_validated_by_staff or self.is_validated_by_users)
+
+    def user(self):
+        return AUTH_USER_MODEL.objects.get(id=self.created_by_user_id)
+
+    def staff(self):
+        return AUTH_USER_MODEL.objects.get(id=self.validated_by_staff_id)
 
 class PersonManager(models.Manager):
     def all_with_perfetch(self):
@@ -10,7 +33,7 @@ class PersonManager(models.Manager):
                                  'written_books', 'character_set', 'acted_by')
         return qs
 
-class Person(models.Model):
+class Person(ValidatableModel):
     is_fictional = models.BooleanField('Выдуманный персонаж', default = False)
     name = models.CharField('Имя', max_length = 100)
     born = models.DateField('Дата рождения', null = True, blank = True)
@@ -23,6 +46,7 @@ class Person(models.Model):
         verbose_name = 'Человек'
         verbose_name_plural = 'Люди'
         ordering = ['name']
+        unique_together = ['name', 'born']
 
     def __str__(self):
         return self.name
@@ -37,7 +61,7 @@ class BookManager(models.Manager):
         qs = qs.prefetch_related('characters', 'number_set')
         return qs
 
-class Book(models.Model):
+class Book(ValidatableModel):
     GENRE_CHOICES = {
     (0, 'Фентези'),
     (1, 'Фантастика'),
@@ -58,6 +82,7 @@ class Book(models.Model):
         verbose_name = 'Книга'
         verbose_name_plural = 'Книги'
         ordering = ['title']
+        unique_together = ['title', 'year']
 
     def __str__(self):
         if self.year:
@@ -81,6 +106,9 @@ class Character(models.Model):
     def __str__(self):
         return self.character.name
 
+    def get_absolute_url(self):
+        return self.character.get_absolute_url()
+
 class MovieManager(models.Manager):
     def all_with_perfetch(self):
         qs = self.get_queryset()
@@ -88,7 +116,7 @@ class MovieManager(models.Manager):
         qs = qs.prefetch_related('roles', 'number_set')
         return qs
 
-class Movie(models.Model):
+class Movie(ValidatableModel):
     GENRE_CHOICES = {
     (0, 'Фентези'),
     (1, 'Фантастика'),
@@ -110,6 +138,7 @@ class Movie(models.Model):
         verbose_name = 'Фильм'
         verbose_name_plural = 'Фильмы'
         ordering = ['title']
+        unique_together = ['title', 'year']
 
     def __str__(self):
         if self.year:
@@ -134,9 +163,17 @@ class Role(models.Model):
     def __str__(self):
         return '{} сыграл(а) {}'.format(self.actor.name, self.character.name)
 
+class CycleManager(models.Manager):
+    def all_with_perfetch(self):
+        qs = self.get_queryset()
+        qs = qs.prefetch_related('number_set')
+        return qs
+
 class Cycle(models.Model):
     title = models.CharField('Название', max_length = 100)
     description = models.TextField('Описание', null = True, blank = True)
+
+    objects = CycleManager()
 
     class Meta:
         verbose_name = 'Цикл'
@@ -145,6 +182,9 @@ class Cycle(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return '/core/cycles/{}'.format(self.pk)
 
 class Number(models.Model):
     cycle = models.ForeignKey(Cycle, on_delete = models.CASCADE)
@@ -161,13 +201,23 @@ class Number(models.Model):
     def __str__(self):
         return '{} #{}'.format(self.cycle, str(self.number))
 
+    def object(self):
+        if self.book:
+            return self.book
+        if self.movie:
+            return self.movie
+        self.delete()
+
+    def get_absolute_url(self):
+        return self.cycle.get_absolute_url()
+
 class ThemeManager(models.Manager):
     def all_with_perfetch(self):
         qs = self.get_queryset()
         qs = qs.prefetch_related('creators', 'cycles', 'books', 'movies')
         return qs
 
-class Theme(models.Model):
+class Theme(ValidatableModel):
     title = models.CharField('Название', max_length = 100)
     description = models.TextField('Описание', null = True, blank = True)
     creators = models.ManyToManyField(Person, related_name = 'created', blank = True)

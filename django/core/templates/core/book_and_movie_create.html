@@ -1,0 +1,39 @@
+{% extends 'layout/wrapper.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{form|crispy}}
+    {% if cycles %}
+      <label for="id_cycle" class="col-form-label">
+        Известные циклы
+      </label>
+      <select name="cycle" class="select form-control my-2" id="id_cycle">
+        {% for cycle in cycles %}
+          <option value="{{cycle.id}}">{{cycle.title}}</option>
+        {% endfor %}
+        <option value="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Добавить новый цикл
+        </option>
+      </select>
+      <div class="collapse my-2" id="collapseExample">
+        <div class="card card-body border-0">
+          <label for="id_cycle" class="col-form-label">
+             Новый цикл:
+          </label>
+          <input type="text" class="form-control my-2" name="new_cycle_title" maxlength="100" placeholder="Название">
+          <textarea rows="2" class="form-control" name="new_cycle_description" placeholder="Описание"></textarea>
+        </div>
+      </div>
+    {% else %}
+      <label for="id_cycle" class="col-form-label">
+         Новый цикл:
+      </label>
+      <input type="text" class="form-control my-2" name="new_cycle_title" maxlength="100" placeholder="Название">
+      <textarea rows="2" class="form-control" name="new_cycle_description" placeholder="Описание"></textarea>
+    {% endif %}
+    <button type="submit" class="btn btn-success my-2">Сохранить</button>
+  </form>
+{% endblock %}

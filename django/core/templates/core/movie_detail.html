@@ -8,26 +8,29 @@
   <h1>{{object}}</h1>
   <p class="h-5 m-0">{{object.get_genre_display|default_if_none:""}}</p>
   {% for number in object.number_set.all %}
-    <p class="h-5 m-0">{{number|default_if_none:""}}</p>
+    <p class="h-5 m-0"><a href="{{number.get_absolute_url}}">{{number}}</a></p>
   {% endfor %}
   <p>Сюжет: {{object.plot|default:"Описание отсутсвует"|default_if_none:"Описание отсутсвует"}}</p>
-  {% if object.director %}
-    <p class="h-5">
-      Режисер:
+  <p class="h-5">
+    Режисер:
+    {% if object.director %}
       <a href="{{object.director.get_absolute_url}}">
         {{object.director}}
       </a>
-    </p>
-  {% endif %}
-  {% if object.writer %}
-    <p class="h-5">
-      Автор:
+    {% else %}
+      <a href="{% url 'core:person_create' related_name='director' pk=object.pk %}">Добавить</a>
+    {% endif %}
+  </p>
+  <p class="h-5">
+    Сценарист:
+    {% if object.writer %}
       <a href="{{object.writer.get_absolute_url}}">
         {{object.writer}}
       </a>
-    </p>
-  {% endif %}
-  {% if object.roles.all %}
+    {% else %}
+      <a href="{% url 'core:person_create' related_name='writer' pk=object.pk %}">Добавить</a>
+    {% endif %}
+  </p>
     <p class="h-5 m-0">Персонажи:</p>
     <ul>
       {% for one in object.roles.all %}
@@ -41,6 +44,6 @@
           </a>
         </li>
       {% endfor %}
+      <li><a href="{% url 'core:person_create_as_role' pk=object.pk %}">Добавить</a></li>
     </ul>
-  {% endif %}
 {% endblock %}

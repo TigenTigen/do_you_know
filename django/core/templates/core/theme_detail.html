@@ -7,41 +7,53 @@
 {% block content %}
   <h1>{{object.title}}</h1>
   <p>{{object.description}}</p>
-  {% if object.creators.all %}
-    <p class="h-5 m-0">Создатели:
-      {% for creator in object.creators.all %}<a href="{{creator.get_absolute_url}}">{{creator}}</a>{% if not forloop.last %}, {% else %}.{% endif %}{% endfor %}
-    </p>
-  {% endif %}
+  <p class="h-5 m-0">Создатели:
+    {% for creator in object.creators.all %}
+      <a href="{{creator.get_absolute_url}}">{{creator}}</a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    ...
+    <a href="{% url 'core:person_create' related_name='creator' pk=object.pk %}">Добавить</a>
+  </p>
   {% if object.cycles.all %}
     <p class="h-5 m-0">Циклы:</p>
     <ul>
       {% for cycle in object.cycles.all %}
-        <li>{{cycle}}</li>
+      <li>
+        <a href="{{cycle.get_absolute_url}}">
+          {{cycle}}
+        </a>
+      </li>
       {% endfor %}
     </ul>
   {% endif %}
-  {% if object.books.all %}
-    <p class="h-5 m-0">Книги:</p>
-    <ul>
-      {% for book in object.books.all %}
-        <li>
-          <a href="{{book.get_absolute_url}}">
-            {{book}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-  {% if object.movies.all %}
-    <p class="h-5 m-0">Фильмы:</p>
-    <ul>
-      {% for movie in object.movies.all %}
-        <li>
-          <a href="{{movie.get_absolute_url}}">
-            {{movie}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  <p class="h-5 m-0">Книги:</p>
+  <ul>
+    {% for book in object.books.all %}
+      <li>
+        <a href="{{book.get_absolute_url}}">
+          {{book}}
+        </a>
+      </li>
+    {% endfor %}
+    <li>
+      <a href="{% url 'core:book_create' theme_id=object.id %}">
+        Добавить
+      </a>
+    </li>
+  </ul>
+  <p class="h-5 m-0">Фильмы:</p>
+  <ul>
+    {% for movie in object.movies.all %}
+      <li>
+        <a href="{{movie.get_absolute_url}}">
+          {{movie}}
+        </a>
+      </li>
+    {% endfor %}
+    <li>
+      <a href="{% url 'core:movie_create' theme_id=object.id %}">
+        Добавить
+      </a>
+    </li>
+  </ul>
 {% endblock %}

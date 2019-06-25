@@ -1,6 +1,7 @@
 {% extends 'layout/wrapper.html' %}
 
 {% block content %}
+  <a href="{% url 'core:theme_create' %}">new_theme</a>
   <ul>
     {% for theme in object_list %}
       <li>

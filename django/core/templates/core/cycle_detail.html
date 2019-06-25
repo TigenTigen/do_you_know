@@ -1,0 +1,15 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block title %}
+  {{object.title}}
+{% endblock %}
+
+{% block content %}
+  <h1>{{object.title}}</h1>
+  <p>{{object.description}}</p>
+  <ul>
+  {% for number in object.number_set.all %}
+    <li>{{number.number}}: <a href="{{number.object.get_absolute_url}}">{{number.object}}</a></li>
+  {% endfor %}
+  </ul>
+{% endblock %}

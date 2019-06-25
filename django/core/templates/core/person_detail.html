@@ -1,7 +1,7 @@
 {% extends 'layout/wrapper.html' %}
 
 {% block title %}
-  {{object.title}}
+  {{object.name}}
 {% endblock %}
 
 {% block content %}
@@ -44,7 +44,7 @@
     <ul>
       {% for one in object.character_set.all %}
         <li>
-          <a href="{{book.get_absolute_url}}">
+          <a href="{{one.book.get_absolute_url}}">
             {{one.book}}
           </a>
         </li>
