@@ -17,7 +17,7 @@ class AdvUserManager(models.Manager):
     pass
 
 class AdvUser(AbstractUser):
-    objects = AdvUserManager()
+    #objects = AdvUserManager()
 
     class Meta(AbstractUser.Meta):
         verbose_name = 'Пользователь'
