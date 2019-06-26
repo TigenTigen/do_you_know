@@ -43,9 +43,9 @@ class CycleDetail(DetailView):
 # Creation with forms
 @login_required
 def theme_create(request):
-    form = ThemeForm()
+    form = ThemeAutoLookupForm(initial={'created_by_user_id': request.user.id})
     if request.method == 'POST':
-        form = ThemeForm(request.POST, initial={'created_by_user_id': request.user.id})
+        form = ThemeAutoLookupForm(request.POST)
         if form.is_valid():
             new_object = form.save()
             return redirect(new_object.get_absolute_url())
@@ -54,11 +54,11 @@ def theme_create(request):
 @login_required
 def book_create(request, theme_id):
     theme = get_object_or_404(Theme, id=theme_id)
-    form = BookForm()
+    form = BookAutoLookupForm(initial={'created_by_user_id': request.user.id})
     cycles = theme.cycles.all()
     cycle = None
     if request.method == 'POST':
-        form = BookForm(request.POST, initial={'created_by_user_id': request.user.id})
+        form = BookAutoLookupForm(request.POST)
         if form.is_valid():
             new_object = form.save()
             theme.books.add(new_object)
@@ -88,11 +88,11 @@ def book_create(request, theme_id):
 @login_required
 def movie_create(request, theme_id):
     theme = get_object_or_404(Theme, id=theme_id)
-    form = MovieForm()
+    form = MovieAutoLookupForm(initial={'created_by_user_id': request.user.id})
     cycles = theme.cycles.all()
     cycle = None
     if request.method == 'POST':
-        form = MovieForm(request.POST, initial={'created_by_user_id': request.user.id})
+        form = MovieAutoLookupForm()
         if form.is_valid():
             new_object = form.save()
             theme.movies.add(new_object)
@@ -130,23 +130,42 @@ def person_create(request, related_name, pk):
 @login_required
 def person_create_as_role(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
+    actor_name_field = ActorNameAutoLookupForm()
+    character_form = CharacterPersonForm(initial={'created_by_user_id': request.user.id})
+    character, actor = None, None
     if request.method == 'POST':
-        character_form = CharacterPersonForm(request.POST, initial={'created_by_user_id': request.user.id})
-        if character_form.is_valid():
-            character = character_form.save()
-            actor_form_dict = {
-                'name': request.POST.get('actor_name'),
-                'born': request.POST.get('actor_born'),
-                'died': request.POST.get('actor_died'),
-                'description': request.POST.get('actor_description'),
-            }
-            actor_form = PersonForm(actor_form_dict, initial={'created_by_user_id': request.user.id})
-            if actor_form.is_valid():
-                actor = actor_form.save()
+        character_name = request.POST.get('name')
+        if character_name != '' and character_name:
+            person = Person.objects.filter(name=character_name)
+            if person.exists():
+                character = person.get()
+            else:
+                character_form = CharacterPersonForm(request.POST)
+                if character_form.is_valid():
+                    character = character_form.save()
+        if character:
+            actor_name = request.POST.get('actor_name')
+            if actor_name != '' and actor_name:
+                person = Person.objects.filter(name=actor_name)
+                if person.exists():
+                    actor = person.get()
+                else:
+                    actor_form_dict = {
+                        'name': request.POST.get('actor_name'),
+                        'born': request.POST.get('actor_born'),
+                        'died': request.POST.get('actor_died'),
+                        'description': request.POST.get('actor_description'),
+                        'created_by_user_id': request.user.id,
+                    }
+                    actor_form = PersonForm(actor_form_dict)
+                    if actor_form.is_valid():
+                        actor = actor_form.save()
+            if actor:
                 Role.objects.create(actor=actor,
                                     character=character,
                                     movie=movie,
-                                    is_main=character_form.cleaned_data.get('is_main'),
-                                    description=character_form.cleaned_data.get('character_description'))
+                                    is_main=('is_main' in request.POST),
+                                    description=request.POST.get('character_description'))
         return redirect('core:movie_detail', pk=pk)
-    return render(request, 'core/person_create_as_role.html')
+    context = {'actor_name_field': actor_name_field, 'character_form': character_form}
+    return render(request, 'core/person_create_as_role.html', context)

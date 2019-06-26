@@ -8,67 +8,27 @@
     <div class="row">
       <div class="col">
         <p>Актер:</p>
-        <div id="div_id_name" class="form-group">
-          <label for="id_name" class="col-form-label requiredField">Имя*</label>
-          <input type="text" name="actor_name" maxlength="100" class="textinput textInput form-control" required id="id_name">
-        </div>
+        {{actor_name_field|crispy}}
         <div id="div_id_born" class="form-group">
           <label for="id_born" class="col-form-label">Дата рождения</label>
           <input type="text" name="actor_born" class="dateinput form-control" id="id_born">
         </div>
         <div id="div_id_died" class="form-group">
-          <label for="id_died" class="col-form-label ">Дата смерти</label>
+          <label for="id_died" class="col-form-label">Дата смерти</label>
           <input type="text" name="actor_died" class="dateinput form-control" id="id_died">
         </div>
         <div id="div_id_description" class="form-group">
-          <label for="id_description" class="col-form-label ">Описание</label>
+          <label for="id_description" class="col-form-label">Описание</label>
           <div class="">
-            <textarea name="actor_description" rows="3" class="textarea form-control" id="id_description"></textarea>
+            <textarea name="actor_description" rows="10" class="textarea form-control" id="id_description"></textarea>
           </div>
         </div>
       </div>
       <div class="col">
         <p>Персонаж:</p>
-        <div id="div_id_name" class="form-group">
-          <label for="id_name" class="col-form-label  requiredField">Имя*</label>
-          <input type="text" name="name" maxlength="100" class="textinput textInput form-control" required id="id_name">
-        </div>
-        <div id="div_id_born" class="form-group">
-          <label for="id_born" class="col-form-label">Дата рождения</label>
-          <input type="text" name="born" class="dateinput form-control" id="id_born">
-        </div>
-        <div id="div_id_died" class="form-group">
-          <label for="id_died" class="col-form-label">Дата смерти</label>
-          <input type="text" name="died" class="dateinput form-control" id="id_died">
-        </div>
-        <div id="div_id_description" class="form-group">
-          <label for="id_description" class="col-form-label">Описание</label>
-          <div class="">
-            <textarea name="description" rows="3" class="textarea form-control" id="id_description"></textarea>
-          </div>
-        </div>
-        <div class="form-group">
-          <div id="div_id_is_fictional" class="form-check">
-            <label for="id_is_fictional" class="form-check-label"> <input type="checkbox" name="is_fictional" class="checkboxinput form-check-input" id="id_is_fictional">
-                Выдуманный персонаж
-            </label>
-          </div>
-        </div>
-        <div class="form-group">
-          <div id="div_id_is_main" class="form-check">
-            <label for="id_is_main" class="form-check-label">
-              <input type="checkbox" name="is_main" class="checkboxinput form-check-input" id="id_is_main">
-              Главный герой данного фильма
-            </label>
-          </div>
-        </div>
-        <div id="div_id_character_description" class="form-group">
-          <label for="id_character_description" class="col-form-label">Описание героя в данном фильме</label>
-          <textarea name="character_description" rows="3" class="textarea form-control" id="id_character_description"></textarea>
-        </div>
+        {{character_form|crispy}}
       </div>
     </div>
-    <input type="hidden" name="created_by_user_id" id="id_created_by_user_id">
     <button type="submit" class="btn btn-success">Сохранить</button>
   </form>
 {% endblock %}

@@ -35,7 +35,7 @@ class PersonManager(models.Manager):
 
 class Person(ValidatableModel):
     is_fictional = models.BooleanField('Выдуманный персонаж', default = False)
-    name = models.CharField('Имя', max_length = 100)
+    name = models.CharField('Имя', unique=True, max_length = 100)
     born = models.DateField('Дата рождения', null = True, blank = True)
     died = models.DateField('Дата смерти', null = True, blank = True)
     description = models.TextField('Описание', null = True, blank = True)
@@ -46,7 +46,6 @@ class Person(ValidatableModel):
         verbose_name = 'Человек'
         verbose_name_plural = 'Люди'
         ordering = ['name']
-        unique_together = ['name', 'born']
 
     def __str__(self):
         return self.name
@@ -69,7 +68,7 @@ class Book(ValidatableModel):
     (3, 'Драма'),
     }
 
-    title = models.CharField('Название', max_length = 100)
+    title = models.CharField('Название', unique=True, max_length = 100)
     plot = models.TextField('Сюжет', null = True, blank = True)
     genre = models.PositiveIntegerField('Жанр', choices = GENRE_CHOICES, null = True, blank = True)
     year = models.PositiveIntegerField('Год публикации', null = True, blank = True)
@@ -82,7 +81,6 @@ class Book(ValidatableModel):
         verbose_name = 'Книга'
         verbose_name_plural = 'Книги'
         ordering = ['title']
-        unique_together = ['title', 'year']
 
     def __str__(self):
         if self.year:
@@ -124,7 +122,7 @@ class Movie(ValidatableModel):
     (3, 'Драма'),
     }
 
-    title = models.CharField('Название', max_length = 100)
+    title = models.CharField('Название', unique=True, max_length = 100)
     plot = models.TextField('Сюжет', null = True, blank = True)
     genre = models.PositiveIntegerField('Жанр', choices = GENRE_CHOICES, null = True, blank = True)
     year = models.PositiveIntegerField('Год публикации', null = True, blank = True)
@@ -159,6 +157,7 @@ class Role(models.Model):
         verbose_name = 'Роль'
         verbose_name_plural = 'Роли'
         ordering = ('is_main', 'actor')
+        unique_together = ['movie', 'actor', 'character']
 
     def __str__(self):
         return '{} сыграл(а) {}'.format(self.actor.name, self.character.name)
@@ -170,7 +169,7 @@ class CycleManager(models.Manager):
         return qs
 
 class Cycle(models.Model):
-    title = models.CharField('Название', max_length = 100)
+    title = models.CharField('Название', unique=True, max_length = 100)
     description = models.TextField('Описание', null = True, blank = True)
 
     objects = CycleManager()
@@ -218,7 +217,7 @@ class ThemeManager(models.Manager):
         return qs
 
 class Theme(ValidatableModel):
-    title = models.CharField('Название', max_length = 100)
+    title = models.CharField('Название', unique=True, max_length = 100)
     description = models.TextField('Описание', null = True, blank = True)
     creators = models.ManyToManyField(Person, related_name = 'created', blank = True)
     cycles = models.ManyToManyField(Cycle, blank = True)

@@ -133,6 +133,7 @@ TIME_INPUT_FORMATS = ["%H:%M"]
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/home/tygen/Рабочий стол/django/do_you_know/django/static'
 
 # crispy_forms settings:
 INSTALLED_APPS += ['crispy_forms',]
@@ -174,3 +175,6 @@ SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 # core settings:
 INSTALLED_APPS = ['core.apps.CoreConfig',] + INSTALLED_APPS
+
+# django-selectable settings:
+INSTALLED_APPS += ['selectable',]
