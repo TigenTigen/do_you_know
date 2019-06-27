@@ -1,11 +1,29 @@
 from django.db import models
+from django.db.models import Q, Count, Case, When
 from django.contrib.auth import get_user_model
-from django.urls import reverse
+import datetime
 
 AUTH_USER_MODEL = get_user_model()
 
+class ValidatableModelManager(models.Manager):
+    def passed(self):
+        qs = self.get_queryset()
+        qs = qs.filter(Q(is_validated_by_staff=True) | Q(is_validated_by_users=True))
+        return qs
+
+    def current(self, user):
+        qs = self.get_queryset()
+        qs = qs.exclude(Q(is_validated_by_staff=True) | Q(is_validated_by_users=True))
+        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
+                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
+        return qs
+
+    def user_created(self, user_id):
+        qs = self.get_queryset()
+        qs = qs.filter(created_by_user_id=user_id)
+        return qs
+
 class ValidatableModel(models.Model):
-    target_score = models.SmallIntegerField('Граница одобрения', default=5)
     approve_score = models.SmallIntegerField('Счетчик одобрения', default=0)
     is_validated_by_staff = models.BooleanField('Одобрен командой сайта', default=False)
     is_validated_by_users = models.BooleanField('Одобрен пользовательским голосованием', default=False)
@@ -13,6 +31,9 @@ class ValidatableModel(models.Model):
     validated = models.DateTimeField('Дата одобрения', null=True, blank=True)
     created_by_user_id = models.SmallIntegerField('Пользователь, создавший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
     validated_by_staff_id = models.SmallIntegerField('Член команды сайта, одобривший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
+    user_voted = models.ManyToManyField(to=AUTH_USER_MODEL)
+
+    validation = ValidatableModelManager()
 
     class Meta:
         abstract = True
@@ -26,11 +47,47 @@ class ValidatableModel(models.Model):
     def staff(self):
         return AUTH_USER_MODEL.objects.get(id=self.validated_by_staff_id)
 
+    def target(self):
+        return 5
+
+    def validated_by_staff(self, user):
+        self.is_validated_by_staff = True
+        self.validated = datetime.datetime.now()
+        self.validated_by_staff_id = user.id
+        self.save()
+
+    def approved(self, user):
+        self.approve_score = self.approve_score + 1
+        self.user_voted.add(user)
+        if self.approve_score >= self.target():
+            self.is_validated_by_users = True
+            self.validated = datetime.datetime.now()
+        self.save()
+
+    def disapproved(self, user):
+        self.approve_score = self.approve_score - 1
+        self.user_voted.add(user)
+        self.save()
+
+    def validation_status(self):
+        if self.is_validated_by_staff:
+            return 'одобрено командой сайта'
+        elif self.is_validated_by_users:
+            return 'одобрено по итогам голосования пользователей'
+        return 'текущий уровень одобрения: {}'.format(self.approve_score)
+
 class PersonManager(models.Manager):
     def all_with_perfetch(self):
         qs = self.get_queryset()
         qs = qs.prefetch_related('directed', 'wrote', 'roles', 'created',
                                  'written_books', 'character_set', 'acted_by')
+        return qs
+
+    def all_with_perfetch_and_validation(self, id, user):
+        qs = Person.objects.filter(id=id).prefetch_related('directed', 'wrote', 'roles', 'created',
+                                                         'written_books', 'character_set', 'acted_by')
+        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
+                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
 class Person(ValidatableModel):
@@ -50,14 +107,29 @@ class Person(ValidatableModel):
     def __str__(self):
         return self.name
 
+    def extras(self):
+        dict = {'Дата рождения': self.born, 'Дата смерти': self.died,}
+        if self.is_fictional:
+            dict.update({'Вымышленный персонаж': 'Да'})
+        return dict
+
     def get_absolute_url(self):
         return '/core/persons/{}'.format(self.pk)
+
+    def model(self):
+        return 'Person'
 
 class BookManager(models.Manager):
     def all_with_perfetch(self):
         qs = self.get_queryset()
         qs = qs.select_related('author')
         qs = qs.prefetch_related('characters', 'number_set')
+        return qs
+
+    def all_with_perfetch_and_validation(self, id, user):
+        qs = Book.objects.filter(id=id).select_related('author').prefetch_related('characters', 'number_set')
+        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
+                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
 class Book(ValidatableModel):
@@ -69,7 +141,7 @@ class Book(ValidatableModel):
     }
 
     title = models.CharField('Название', unique=True, max_length = 100)
-    plot = models.TextField('Сюжет', null = True, blank = True)
+    description = models.TextField('Сюжет', null = True, blank = True)
     genre = models.PositiveIntegerField('Жанр', choices = GENRE_CHOICES, null = True, blank = True)
     year = models.PositiveIntegerField('Год публикации', null = True, blank = True)
     author = models.ForeignKey(Person, on_delete = models.SET_NULL, related_name = 'written_books', null = True, blank = True)
@@ -87,8 +159,17 @@ class Book(ValidatableModel):
             return '{} ({})'.format(self.title, self.year)
         return self.title
 
+    def extras(self):
+        dict = {'Жанр': self.get_genre_display(),}
+        if self.author and self.author.is_validated():
+            dict.update({'Автор': self.author,})
+        return dict
+
     def get_absolute_url(self):
         return '/core/books/{}'.format(self.pk)
+
+    def model(self):
+        return 'Book'
 
 class Character(models.Model):
     is_main = models.BooleanField('Главный герой', default = False)
@@ -114,6 +195,12 @@ class MovieManager(models.Manager):
         qs = qs.prefetch_related('roles', 'number_set')
         return qs
 
+    def all_with_perfetch_and_validation(self, id, user):
+        qs = Movie.objects.filter(id=id).select_related('director', 'writer').prefetch_related('roles', 'number_set')
+        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
+                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
+        return qs
+
 class Movie(ValidatableModel):
     GENRE_CHOICES = {
     (0, 'Фентези'),
@@ -123,7 +210,7 @@ class Movie(ValidatableModel):
     }
 
     title = models.CharField('Название', unique=True, max_length = 100)
-    plot = models.TextField('Сюжет', null = True, blank = True)
+    description = models.TextField('Сюжет', null = True, blank = True)
     genre = models.PositiveIntegerField('Жанр', choices = GENRE_CHOICES, null = True, blank = True)
     year = models.PositiveIntegerField('Год публикации', null = True, blank = True)
     director = models.ForeignKey(Person, on_delete = models.SET_NULL, related_name = 'directed', null = True, blank = True)
@@ -143,8 +230,19 @@ class Movie(ValidatableModel):
             return '{} ({})'.format(self.title, self.year)
         return self.title
 
+    def extras(self):
+        dict = {'Жанр': self.get_genre_display(),}
+        if self.director and self.director.is_validated():
+            dict.update({'Режисер': self.director,})
+        if self.writer and self.writer.is_validated():
+            dict.update({'Сценарист': self.writer,})
+        return dict
+
     def get_absolute_url(self):
         return '/core/movies/{}'.format(self.pk)
+
+    def model(self):
+        return 'Movie'
 
 class Role(models.Model):
     is_main = models.BooleanField('Главный герой', default = False)
@@ -216,6 +314,12 @@ class ThemeManager(models.Manager):
         qs = qs.prefetch_related('creators', 'cycles', 'books', 'movies')
         return qs
 
+    def all_with_perfetch_and_validation(self, id, user):
+        qs = Theme.objects.filter(id=id).prefetch_related('creators', 'cycles', 'books', 'movies')
+        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
+                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
+        return qs
+
 class Theme(ValidatableModel):
     title = models.CharField('Название', unique=True, max_length = 100)
     description = models.TextField('Описание', null = True, blank = True)
@@ -231,8 +335,20 @@ class Theme(ValidatableModel):
         verbose_name_plural = 'Темы'
         ordering = ['id']
 
+    def extras(self):
+        list = []
+        for person in self.creators.all():
+            if person.is_validated():
+                list.append(person.__str_())
+        if list:
+            return {'Создатели': ', '.join(list)}
+        return {'Создатели': None}
+
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
         return '/core/themes/{}'.format(self.pk)
+
+    def model(self):
+        return 'Theme'

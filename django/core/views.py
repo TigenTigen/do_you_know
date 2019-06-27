@@ -1,41 +1,44 @@
-import django
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from core.forms import *
-from core.models import *
+from django.views.decorators.http import require_POST
+from django.apps import apps
 
+from core.models import *
+from core.forms import *
+from core.mixins import *
+
+# base representaion of models
 class ThemeList(ListView):
-    model = Theme
+    queryset = Theme.validation.passed()
     paginate_by = 10
 
-class ThemeDetail(DetailView):
-    queryset = Theme.objects.all_with_perfetch()
+class ThemeDetail(ValidationSingleObjectMixin, DetailView):
+    model = Theme
 
 class BookList(ListView):
-    model = Book
+    queryset = Book.validation.passed()
     template_name='core/simple_list.html'
     paginate_by = 20
 
-class BookDetail(DetailView):
-    queryset = Book.objects.all_with_perfetch()
+class BookDetail(ValidationSingleObjectMixin, DetailView):
+    model = Book
 
 class MovieList(ListView):
-    model = Movie
+    queryset = Movie.validation.passed()
     template_name='core/simple_list.html'
     paginate_by = 20
 
-class MovieDetail(DetailView):
-    queryset = Movie.objects.all_with_perfetch()
+class MovieDetail(ValidationSingleObjectMixin, DetailView):
+    model = Movie
 
 class PersonList(ListView):
-    model = Person
+    queryset = Person.validation.passed()
     template_name='core/simple_list.html'
     paginate_by = 20
 
-class PersonDetail(DetailView):
-    queryset = Person.objects.all_with_perfetch()
+class PersonDetail(ValidationSingleObjectMixin, DetailView):
+    model = Person
 
 class CycleDetail(DetailView):
     queryset = Cycle.objects.all_with_perfetch()
@@ -169,3 +172,41 @@ def person_create_as_role(request, pk):
         return redirect('core:movie_detail', pk=pk)
     context = {'actor_name_field': actor_name_field, 'character_form': character_form}
     return render(request, 'core/person_create_as_role.html', context)
+
+# new objects validation
+class ValidationThemeList(ValidationMultipleObjectMixin, ListView):
+    model = Theme
+
+class ValidationBookList(ValidationMultipleObjectMixin, ListView):
+    model = Book
+
+class ValidationMovieList(ValidationMultipleObjectMixin, ListView):
+    model = Movie
+
+class ValidationPersonList(ValidationMultipleObjectMixin, ListView):
+    model = Person
+
+@require_POST
+@login_required()
+def validation(request):
+    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+    object = get_object_or_404(model, pk=request.POST.get('object_id'))
+    user = request.user
+    if 'staff_validation' in request.POST:
+        object.validated_by_staff(user)
+    elif 'user_approve' in request.POST:
+        object.approved(user)
+    elif 'user_disapprove' in request.POST:
+        object.disapproved(user)
+    return redirect(request.POST.get('next'))
+
+@login_required()
+def created_by_user(request):
+    user_id = request.user.id
+    created_by_user_dict = {
+        'Темы': Theme.validation.user_created(user_id),
+        'Книги': Book.validation.user_created(user_id),
+        'Фильмы': Movie.validation.user_created(user_id),
+        'Люди': Person.validation.user_created(user_id),
+    }
+    return render(request, 'core/created_by_user.html', {'created_by_user_dict': created_by_user_dict})

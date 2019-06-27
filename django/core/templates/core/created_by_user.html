@@ -1,0 +1,16 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block content %}
+  {% for title, qs in created_by_user_dict.items %}
+    <p>{{title}}:</p>
+    <ul>
+      {% for one in qs %}
+        <li>
+          {{one}} ... {{one.validation_status}} <a href="{{one.get_absolute_url}}">  >>  </a>
+        </li>
+      {% empty %}
+        Данные отсутсвуют
+      {% endfor %}
+    </ul>
+  {% endfor %}
+{% endblock %}

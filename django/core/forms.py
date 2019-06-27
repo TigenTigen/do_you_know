@@ -3,13 +3,19 @@ from django.shortcuts import get_object_or_404
 from selectable.forms import AutoCompleteWidget
 from core.models import *
 from core.lookups import *
+from django.core.exceptions import ValidationError
 
-# base forms
 class ThemeForm(forms.ModelForm):
     class Meta:
         model = Theme
         fields = ('title', 'description', 'created_by_user_id')
         widgets = {'created_by_user_id': forms.HiddenInput()}
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        if description == '':
+            description = None
+        return description
 
 class ThemeAutoLookupForm(ThemeForm):
     title = forms.CharField(
@@ -24,6 +30,12 @@ class PersonForm(forms.ModelForm):
         model = Person
         fields = ('name', 'born', 'died', 'description', 'is_fictional', 'created_by_user_id')
         widgets = {'created_by_user_id': forms.HiddenInput()}
+
+    def clean_description(self):
+        description = self.cleaned_data.get['description']
+        if description == '':
+            description = None
+        return description
 
     def self_processing(self, request, related_name, pk):
         if related_name == 'character':
@@ -94,8 +106,14 @@ class BookForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        fields = ('title', 'year', 'genre', 'plot', 'created_by_user_id', 'cycle', 'number')
+        fields = ('title', 'year', 'genre', 'description', 'created_by_user_id', 'cycle', 'number')
         widgets = {'created_by_user_id': forms.HiddenInput()}
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        if description == '':
+            description = None
+        return description
 
 class BookAutoLookupForm(BookForm):
     title = forms.CharField(
@@ -111,8 +129,14 @@ class MovieForm(forms.ModelForm):
 
     class Meta:
         model = Movie
-        fields = ('title', 'year', 'genre', 'plot', 'created_by_user_id', 'cycle', 'number')
+        fields = ('title', 'year', 'genre', 'description', 'created_by_user_id', 'cycle', 'number')
         widgets = {'created_by_user_id': forms.HiddenInput()}
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        if description == '':
+            description = None
+        return description
 
 class MovieAutoLookupForm(MovieForm):
     title = forms.CharField(
@@ -127,6 +151,12 @@ class CycleForm(forms.ModelForm):
         model = Cycle
         fields = ('title', 'description')
         widgets = {'description': forms.Textarea(attrs={'rows': 2})}
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        if description == '':
+            description = None
+        return description
 
 class NumberForm(forms.ModelForm):
     class Meta:

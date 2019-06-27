@@ -4,16 +4,22 @@
       <a class="nav-link text-white" href="{% url 'core:theme_list' %}">Темы</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="{% url 'core:book_list'%}">Книги</a>
+      <a class="nav-link text-white" href="{% url 'core:book_list' %}">Книги</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="{% url 'core:movie_list'%}">Фильмы</a>
+      <a class="nav-link text-white" href="{% url 'core:movie_list' %}">Фильмы</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-white" href="{% url 'core:person_list'%}">Люди</a>
+      <a class="nav-link text-white" href="{% url 'core:person_list' %}">Люди</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="">Топ-10</a>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Модерация</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="{% url 'core:theme_list_validation' %}">Темы</a>
+        <a class="dropdown-item" href="{% url 'core:book_list_validation' %}">Книги</a>
+        <a class="dropdown-item" href="{% url 'core:movie_list_validation' %}">Фильмы</a>
+        <a class="dropdown-item" href="{% url 'core:person_list_validation' %}">Люди</a>
+      </div>
     </li>
   </ul>
 {% endblock %}

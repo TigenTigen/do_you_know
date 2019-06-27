@@ -1,18 +1,6 @@
-{% extends 'layout/wrapper.html' %}
+{% extends 'core/common_detail.html' %}
 
-{% block title %}
-  {{object.name}}
-{% endblock %}
-
-{% block content %}
-  <h1>{{object}}</h1>
-  {% if object.is_fictional %}
-    (выдуманный персонаж)
-  {% endif %}
-  <p class="m-0">Родился: {{object.born|default_if_none:"-"}}</p>
-  <p class="m-0">Умер: {{object.died|default_if_none:"-"}}</p>
-  <p>Биография: {{object.description|default_if_none:"Биография отсутсвует"}}</p>
-
+{% block detail %}
   {% if object.created.all %}
     <p class="m-0">Созданные миры:</p>
     <ul>

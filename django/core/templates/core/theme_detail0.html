@@ -1,6 +1,12 @@
-{% extends 'core/common_detail.html' %}
+{% extends 'layout/wrapper.html' %}
 
-{% block detail %}
+{% block title %}
+  {{object.title}}
+{% endblock %}
+
+{% block content %}
+  <h1>{{object.title}}</h1>
+  <p>{{object.description}}</p>
   <p class="h-5 m-0">Создатели:
     {% for creator in object.creators.all %}
       <a href="{{creator.get_absolute_url}}">{{creator}}</a>{% if not forloop.last %}, {% endif %}

@@ -1,0 +1,29 @@
+{% block validation_form %}
+  <form class="" action="{% url 'core:validation' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{request.path}}">
+    <input type="hidden" name="model" value="{{object.model}}">
+    <input type="hidden" name="object_id" value="{{object.id}}">
+    {% if user.is_staff %}
+      <button type="submit" name="staff_validation" class="btn btn-light">
+        Отправить в основной список
+      </button>
+    {% endif %}
+    <label class="d-inline-block mr-4">Рейтинг одобрения: {{object.approve_score}}</label>
+    {% if object.user_can_vote %}
+      <button type="submit" class="btn bg-transparent p-0" name="user_approve">
+        <i class="material-icons" style="font-size: 18px;">
+          arrow_upward
+        </i>
+      </button>
+      <button type="submit" class="btn bg-transparent p-0" name="user_disapprove">
+        <i class="material-icons" style="font-size: 18px;">
+          arrow_downward
+        </i>
+      </button>
+    {% endif %}
+    {% if object.vote_count > 0 %}
+      <p class="m-0 text-success">Спасибо, что приняли участие в голосовании!</p>
+    {% endif %}
+  </form>
+{% endblock %}

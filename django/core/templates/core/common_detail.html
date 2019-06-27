@@ -1,0 +1,28 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block title %}
+  {{object.title}}
+{% endblock %}
+
+{% block content %}
+  {% if not object.is_validated %}
+    <div class="alert alert-danger">
+      Данная страница еще не одобрена пользовательским голосованием или командой сайта!
+      {% include 'core/validation_form.html' %}
+    </div>
+  {% endif %}
+
+  <h1>{{object}}</h1>
+  <p>Описание: {{object.description|default_if_none:" - "}}</p>
+  <p>{% for key, value in object.extras.items %}   {{key}}: {{value|default_if_none:"-"}},   {% endfor %}</p>
+
+  {% block detail %}
+  {% endblock detail %}
+
+  <div class="text-muted">
+    <p class="m-0">Данную страницу создал(а): {{object.user.username}}, {{object.proposed}}</p>
+    {% if object.is_validated %}
+      <p class="m-0">{{object.validation_status}}, {{object.validated}}</p>
+    {% endif %}
+  </div>
+{% endblock %}
