@@ -320,6 +320,11 @@ class ThemeManager(models.Manager):
                          user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
+    def favorite_by(self, user):
+        qs = self.get_queryset()
+        qs = qs.filter(favorited_by=user).distinct()
+        return qs
+
 class Theme(ValidatableModel):
     title = models.CharField('Название', unique=True, max_length = 100)
     description = models.TextField('Описание', null = True, blank = True)
@@ -327,6 +332,7 @@ class Theme(ValidatableModel):
     cycles = models.ManyToManyField(Cycle, blank = True)
     books = models.ManyToManyField(Book, blank = True)
     movies = models.ManyToManyField(Movie, blank = True)
+    favorited_by = models.ManyToManyField(AUTH_USER_MODEL, related_name='favorite_themes')
 
     objects = ThemeManager()
 
@@ -352,3 +358,6 @@ class Theme(ValidatableModel):
 
     def model(self):
         return 'Theme'
+
+    def favorite_count(self):
+        return self.favorited_by.distinct().count()

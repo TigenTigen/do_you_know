@@ -1,5 +1,6 @@
 from django.views.generic.list import MultipleObjectMixin
 from django.views.generic.detail import SingleObjectMixin
+from django.shortcuts import get_object_or_404
 
 class ValidationSingleObjectMixin(SingleObjectMixin):
     def get_queryset(self, *args, **kwargs):

@@ -9,6 +9,8 @@ urlpatterns = [
     path('themes/<int:pk>/', ThemeDetail.as_view(), name='theme_detail'),
     path('themes/create/', theme_create, name='theme_create'),
     path('themes/validation/', ValidationThemeList.as_view(), name='theme_list_validation'),
+    path('themes/favorite/<int:pk>/', favorite, name='favorite'),
+    path('themes/favorite/user/', FavouriteThemeList.as_view(), name='favorite_by_user'),
         #cycles
     path('cycles/<int:pk>/', CycleDetail.as_view(), name='cycle_detail'),
         #books

@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.apps import apps
+from django.http import HttpResponseRedirect
 
 from core.models import *
 from core.forms import *
@@ -198,7 +199,7 @@ def validation(request):
         object.approved(user)
     elif 'user_disapprove' in request.POST:
         object.disapproved(user)
-    return redirect(request.POST.get('next'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required()
 def created_by_user(request):
@@ -210,3 +211,23 @@ def created_by_user(request):
         'Люди': Person.validation.user_created(user_id),
     }
     return render(request, 'core/created_by_user.html', {'created_by_user_dict': created_by_user_dict})
+
+# favorite_themes
+class FavouriteThemeList(ListView):
+    model = Theme
+    template_name='core/theme_favorite_list.html'
+    paginate_by = 20
+
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user
+        return Theme.objects.favorite_by(user)
+
+@login_required()
+def favorite(request, pk):
+    user = request.user
+    theme = get_object_or_404(Theme, pk=pk)
+    if theme in user.favorite_themes.all():
+        user.favorite_themes.remove(theme)
+    else:
+        request.user.favorite_themes.add(theme)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

@@ -9,9 +9,7 @@
           <p class="m-0">Вы с нами уже {{user.date_joined|timesince}}.</p>
           <p class="m-0">
             Понравившиеся
-            <a href="" class="text-white">темы,</a>
-            <a href="" class="text-white">фильмы,</a>
-            <a href="" class="text-white">книги</a>
+            <a href="{% url 'core:favorite_by_user' %}" class="text-white">темы</a>
           </p>
           <a href="{% url 'core:created_by_user' %}" class="text-white">mine</a>
         </div>

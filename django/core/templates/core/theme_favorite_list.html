@@ -1,0 +1,25 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block content %}
+  <ul>
+    {% for object in object_list %}
+      <li>
+        <a href="{{object.get_absolute_url}}">
+          {{object}}
+        </a>
+      </li>
+      <a type="button" class="btn" href="{% url 'core:favorite' pk=object.id %}">
+        <i class="material-icons" style="font-size: 18px; color: red;">
+          {% if object in user.favorite_themes.all %}
+            favorite
+          {% else %}
+            favorite_border
+          {% endif %}
+        </i>
+        <span class="d-inline-block mx-2 text-dark">{{object.favorite_count}}</span>
+      </a>
+    {% empty %}
+      Данные отсутствуют
+    {% endfor %}
+  </ul>
+{% endblock %}

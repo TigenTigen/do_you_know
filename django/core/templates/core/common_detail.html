@@ -10,6 +10,21 @@
       Данная страница еще не одобрена пользовательским голосованием или командой сайта!
       {% include 'core/validation_form.html' %}
     </div>
+  {% else %}
+    <p class="d-inline-block mx-2 my-0">Оцените данную страницу:</p>
+    {% if object.model == 'Theme' %}
+      <a type="button" class="btn" href="{% url 'core:favorite' pk=object.id %}">
+        <i class="material-icons" style="font-size: 18px; color: red;">
+          {% if object in user.favorite_themes.all %}
+            favorite
+          {% else %}
+            favorite_border
+          {% endif %}
+        </i>
+        <span class="d-inline-block mx-2 text-dark">{{object.favorite_count}}</span>
+      </a>
+    {% endif %}
+    <hr>
   {% endif %}
 
   <h1>{{object}}</h1>

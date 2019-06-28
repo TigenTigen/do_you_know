@@ -1,7 +1,6 @@
 {% block validation_form %}
   <form class="" action="{% url 'core:validation' %}" method="post">
     {% csrf_token %}
-    <input type="hidden" name="next" value="{{request.path}}">
     <input type="hidden" name="model" value="{{object.model}}">
     <input type="hidden" name="object_id" value="{{object.id}}">
     {% if user.is_staff %}
