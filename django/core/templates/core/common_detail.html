@@ -7,24 +7,53 @@
 {% block content %}
   {% if not object.is_validated %}
     <div class="alert alert-danger">
-      Данная страница еще не одобрена пользовательским голосованием или командой сайта!
+      <p>
+        Данная страница еще не одобрена пользовательским голосованием или командой сайта!
+        В связи с чем на данной странице действует ограничение функционала.
+      </p>
       {% include 'core/validation_form.html' %}
     </div>
   {% else %}
-    <p class="d-inline-block mx-2 my-0">Оцените данную страницу:</p>
-    {% if object.model == 'Theme' %}
-      <a type="button" class="btn" href="{% url 'core:favorite' pk=object.id %}">
-        <i class="material-icons" style="font-size: 18px; color: red;">
-          {% if object in user.favorite_themes.all %}
-            favorite
-          {% else %}
-            favorite_border
-          {% endif %}
-        </i>
-        <span class="d-inline-block mx-2 text-dark">{{object.favorite_count}}</span>
-      </a>
+    {% if user_is_creator %}
+      <div class="alert alert-danger">
+        Вы являетесь создателем данной страницы,
+        в связи с чем вы не можете ее оценивать!
+      </div>
+    {% else %}
+      <form action="{% url 'core:rate' %}" method="post" class="bg-light d-flex flex-row align-items-center p-2">
+        {% csrf_token %}
+        <input type="hidden" name="model" value="{{object.model}}">
+        <input type="hidden" name="object_id" value="{{object.id}}">
+        <label class="d-inline-block mx-2 my-2">Оцените данную страницу:</label>
+        {% for one in 'five!' %}
+        <button type="submit" name="value" value="{{forloop.counter}}"
+                class="btn bg-light d-inline-block align-items-center my-2 p-0">
+          <i class="material-icons m-0 p-0" style="font-size: 24px; color: green;">
+            {% if forloop.counter <= current_user_rating %}
+              star
+            {% else %}
+              star_border
+            {% endif %}
+          </i>
+        </button>
+        {% endfor %}
+        <label class="d-inline-block mx-2 my-2 text-dark">{{object.rating}}</label>
+        {% if object.model == 'Theme' %}
+          <label class="d-inline-block mx-2 my-2">Избранные темы:</label>
+          <a type="button" class="btn bg-light d-inline-block align-items-center my-2 p-0" href="{% url 'core:favorite' pk=object.id %}">
+            <i class="material-icons m-0 p-0" style="font-size: 18px; color: red;">
+              {% if object in user.favorite_themes.all %}
+                favorite
+              {% else %}
+                favorite_border
+              {% endif %}
+            </i>
+            <span class="d-inline-block mx-2 my-0 p-0 text-dark">{{object.favorite_count}}</span>
+          </a>
+        {% endif %}
+      </form>
+      <hr>
     {% endif %}
-    <hr>
   {% endif %}
 
   <h1>{{object}}</h1>

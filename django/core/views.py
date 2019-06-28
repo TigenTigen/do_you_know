@@ -1,9 +1,9 @@
 from django.views.generic import ListView, DetailView, CreateView
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 from django.apps import apps
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from core.models import *
 from core.forms import *
@@ -14,32 +14,32 @@ class ThemeList(ListView):
     queryset = Theme.validation.passed()
     paginate_by = 10
 
-class ThemeDetail(ValidationSingleObjectMixin, DetailView):
-    model = Theme
+class ThemeDetail(ExtraContextSingleObjectMixin, DetailView):
+    queryset = Theme.objects.all_with_perfetch()
 
 class BookList(ListView):
     queryset = Book.validation.passed()
     template_name='core/simple_list.html'
     paginate_by = 20
 
-class BookDetail(ValidationSingleObjectMixin, DetailView):
-    model = Book
+class BookDetail(ExtraContextSingleObjectMixin, DetailView):
+    queryset = Book.objects.all_with_perfetch()
 
 class MovieList(ListView):
     queryset = Movie.validation.passed()
     template_name='core/simple_list.html'
     paginate_by = 20
 
-class MovieDetail(ValidationSingleObjectMixin, DetailView):
-    model = Movie
+class MovieDetail(ExtraContextSingleObjectMixin, DetailView):
+    queryset = Movie.objects.all_with_perfetch()
 
 class PersonList(ListView):
     queryset = Person.validation.passed()
     template_name='core/simple_list.html'
     paginate_by = 20
 
-class PersonDetail(ValidationSingleObjectMixin, DetailView):
-    model = Person
+class PersonDetail(ExtraContextSingleObjectMixin, DetailView):
+    queryset = Person.objects.all_with_perfetch()
 
 class CycleDetail(DetailView):
     queryset = Cycle.objects.all_with_perfetch()
@@ -230,4 +230,22 @@ def favorite(request, pk):
         user.favorite_themes.remove(theme)
     else:
         request.user.favorite_themes.add(theme)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+# raitings
+@require_POST
+@login_required()
+def rate(request):
+    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+    object = get_object_or_404(model, pk=request.POST.get('object_id'))
+    user = request.user
+    value = int(request.POST.get('value'))
+    rating = object.ratings.filter(user_rated=user)
+    if rating.exists():
+        rating = rating.get()
+        rating.value = value
+        rating.save()
+    else:
+        user.ratings.create(value=value, content_object=object)
+    object.refresh_ratig()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

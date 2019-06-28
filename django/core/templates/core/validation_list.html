@@ -12,7 +12,7 @@
       <p class="card-text text-muted">{{object.user.username}}, {{object.proposed}}</p>
     </div>
     <div class="card-footer">
-      {% include 'core/validation_form.html' %}
+      {% include 'core/validation_form.html' with already_voted=object.already_voted user_is_creator=object.user_is_creator %}
     </div>
   </div>
   {% empty %}

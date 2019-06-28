@@ -32,4 +32,5 @@ urlpatterns = [
         #validation
     path('validation/', validation, name='validation'),
     path('created_by_user/', created_by_user, name='created_by_user'),
+    path('rate/', rate, name='rate'),
 ]

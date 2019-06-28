@@ -1,9 +1,24 @@
 from django.db import models
-from django.db.models import Q, Count, Case, When
+from django.db.models import Q, Count, Case, When, Avg, Sum
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 import datetime
 
 AUTH_USER_MODEL = get_user_model()
+
+class Rating(models.Model):
+    value = models.PositiveSmallIntegerField('', default=0)
+    user_rated = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ratings')
+    content_type = models.ForeignKey(to=ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+
+    class Meta:
+        unique_together = ['user_rated', 'content_type', 'object_id']
+
+    def __str__(self):
+        return str(self.value)
 
 class ValidatableModelManager(models.Manager):
     def passed(self):
@@ -14,8 +29,10 @@ class ValidatableModelManager(models.Manager):
     def current(self, user):
         qs = self.get_queryset()
         qs = qs.exclude(Q(is_validated_by_staff=True) | Q(is_validated_by_users=True))
-        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
-                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
+        if user.is_authenticated:
+            qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
+                             already_voted=Case(When(vote_count=0, then=False), default=True, output_field=models.BooleanField()),
+                             user_is_creator=Case(When(created_by_user_id=user.id, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
     def user_created(self, user_id):
@@ -32,6 +49,8 @@ class ValidatableModel(models.Model):
     created_by_user_id = models.SmallIntegerField('Пользователь, создавший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
     validated_by_staff_id = models.SmallIntegerField('Член команды сайта, одобривший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
     user_voted = models.ManyToManyField(to=AUTH_USER_MODEL)
+    rating = models.FloatField('Оценка пользователей', default=0)
+    ratings = GenericRelation(Rating, related_name='object')
 
     validation = ValidatableModelManager()
 
@@ -76,18 +95,16 @@ class ValidatableModel(models.Model):
             return 'одобрено по итогам голосования пользователей'
         return 'текущий уровень одобрения: {}'.format(self.approve_score)
 
+    def refresh_ratig(self):
+        aggregation_dict = self.ratings.aggregate(rating=Avg('value'))
+        self.rating = aggregation_dict.get('rating')
+        self.save()
+
 class PersonManager(models.Manager):
     def all_with_perfetch(self):
         qs = self.get_queryset()
         qs = qs.prefetch_related('directed', 'wrote', 'roles', 'created',
                                  'written_books', 'character_set', 'acted_by')
-        return qs
-
-    def all_with_perfetch_and_validation(self, id, user):
-        qs = Person.objects.filter(id=id).prefetch_related('directed', 'wrote', 'roles', 'created',
-                                                         'written_books', 'character_set', 'acted_by')
-        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
-                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
 class Person(ValidatableModel):
@@ -124,12 +141,6 @@ class BookManager(models.Manager):
         qs = self.get_queryset()
         qs = qs.select_related('author')
         qs = qs.prefetch_related('characters', 'number_set')
-        return qs
-
-    def all_with_perfetch_and_validation(self, id, user):
-        qs = Book.objects.filter(id=id).select_related('author').prefetch_related('characters', 'number_set')
-        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
-                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
 class Book(ValidatableModel):
@@ -193,12 +204,6 @@ class MovieManager(models.Manager):
         qs = self.get_queryset()
         qs = qs.select_related('director', 'writer')
         qs = qs.prefetch_related('roles', 'number_set')
-        return qs
-
-    def all_with_perfetch_and_validation(self, id, user):
-        qs = Movie.objects.filter(id=id).select_related('director', 'writer').prefetch_related('roles', 'number_set')
-        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
-                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
 class Movie(ValidatableModel):
@@ -312,12 +317,6 @@ class ThemeManager(models.Manager):
     def all_with_perfetch(self):
         qs = self.get_queryset()
         qs = qs.prefetch_related('creators', 'cycles', 'books', 'movies')
-        return qs
-
-    def all_with_perfetch_and_validation(self, id, user):
-        qs = Theme.objects.filter(id=id).prefetch_related('creators', 'cycles', 'books', 'movies')
-        qs = qs.annotate(vote_count=Count('user_voted', filter=Q(user_voted=user), distinct=True),
-                         user_can_vote=Case(When(created_by_user_id=user.id, then=False), When(vote_count=0, then=True), default=False, output_field=models.BooleanField()))
         return qs
 
     def favorite_by(self, user):

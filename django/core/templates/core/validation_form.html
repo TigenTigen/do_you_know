@@ -4,25 +4,26 @@
     <input type="hidden" name="model" value="{{object.model}}">
     <input type="hidden" name="object_id" value="{{object.id}}">
     {% if user.is_staff %}
-      <button type="submit" name="staff_validation" class="btn btn-light">
+      <button type="submit" name="staff_validation" class="btn btn-light mr-2">
         Отправить в основной список
       </button>
     {% endif %}
     <label class="d-inline-block mr-4">Рейтинг одобрения: {{object.approve_score}}</label>
-    {% if object.user_can_vote %}
-      <button type="submit" class="btn bg-transparent p-0" name="user_approve">
-        <i class="material-icons" style="font-size: 18px;">
-          arrow_upward
-        </i>
-      </button>
-      <button type="submit" class="btn bg-transparent p-0" name="user_disapprove">
-        <i class="material-icons" style="font-size: 18px;">
-          arrow_downward
-        </i>
-      </button>
-    {% endif %}
-    {% if object.vote_count > 0 %}
-      <p class="m-0 text-success">Спасибо, что приняли участие в голосовании!</p>
+    {% if not user_is_creator %}
+      {% if not already_voted %}
+        <button type="submit" class="btn bg-transparent p-0" name="user_approve">
+          <i class="material-icons" style="font-size: 18px;">
+            arrow_upward
+          </i>
+        </button>
+        <button type="submit" class="btn bg-transparent p-0" name="user_disapprove">
+          <i class="material-icons" style="font-size: 18px;">
+            arrow_downward
+          </i>
+        </button>
+      {% else %}
+        <p class="m-0 text-success">Спасибо, что приняли участие в голосовании!</p>
+      {% endif %}
     {% endif %}
   </form>
 {% endblock %}
