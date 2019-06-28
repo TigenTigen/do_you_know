@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q, Count, Case, When, Avg, Sum
+from django.db.models import Q, F, Count, Case, When, Avg, Sum
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -107,6 +107,13 @@ class PersonManager(models.Manager):
                                  'written_books', 'character_set', 'acted_by')
         return qs
 
+class CustomValidatableModelManager(ValidatableModelManager):
+    def passed(self):
+        qs = self.get_queryset()
+        qs = qs.filter(Q(is_validated_by_staff=True) | Q(is_validated_by_users=True))
+        qs = qs.annotate(title=F('name'), year=F('born'))
+        return qs
+
 class Person(ValidatableModel):
     is_fictional = models.BooleanField('Выдуманный персонаж', default = False)
     name = models.CharField('Имя', unique=True, max_length = 100)
@@ -115,6 +122,7 @@ class Person(ValidatableModel):
     description = models.TextField('Описание', null = True, blank = True)
 
     objects = PersonManager()
+    validation = CustomValidatableModelManager()
 
     class Meta:
         verbose_name = 'Человек'

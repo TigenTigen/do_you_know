@@ -1,0 +1,86 @@
+{% extends 'layout/wrapper.html' %}
+
+{% block content %}
+  <div class="mb-2">
+    <nav class="nav bg-light d-flex flex-row align-items-center justify-content-arownd p-2">
+      <label class="m-0">Всего: {{object_list.count}}</label>
+      <div id="paginate_by" class="ml-auto">
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle" type="button" id="paginate_by_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            На странице
+          </button>
+          <div class="dropdown-menu" aria-labelledby="paginate_by_button">
+            {% for number in pagination_list %}
+              <a href="?order={{order}}&paginate_by={{number}}&card_type={{card_type}}" class="dropdown-item">
+                {% if number == paginate_by %}
+                  <strong>{{number}}</strong>
+                {% else %}
+                  {{number}}
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div id="order">
+        <div class="dropdown">
+          <a class="btn btn-light dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Упорядочить
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            {% for key, value in order_dict.items %}
+              <a href="?paginate_by={{paginate_by}}&order={{key}}&card_type={{card_type}}" class="dropdown-item">
+                {% if key == order %}
+                  <strong>{{value}}</strong>
+                {% else %}
+                  {{value}}
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div id="card_type">
+        {% for type in card_list %}
+          <a type="button" class="btn bg-light m-0 p-0" href="?page={{page_obj.number}}&paginate_by={{paginate_by}}&order={{order}}&card_type={{type}}">
+            {% if type == card_type %}
+              <i class="material-icons m-0 p-0" style="font-size: 36px; color: green">
+                {{type}}
+              </i>
+            {% else %}
+              <i class="material-icons m-0 p-0 text-muted" style="font-size: 36px;">
+                {{type}}
+              </i>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    </nav>
+    <hr>
+  </div>
+
+  <div class="card-deck">
+    {% for object in object_list %}
+      {% include card_path %}
+    {% empty %}
+      <p>Данные отсутствуют</p>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+    <div class="mt-auto">
+      <hr>
+      <nav class="nav bg-light">
+        <a class="nav-link" href="?page=1{{page_suffix}}">Начало</a>
+        {% if page_obj.has_previous %}
+          <a class="nav-link" href="?page={{page_obj.previous_page_number}}{{page_suffix}}">{{page_obj.previous_page_number}}</a>
+        {% endif %}
+        <a class="nav-link" href="?page={{page_obj.number}}{{page_suffix}}"><u>{{page_obj.number}}</u></a>
+        {% if page_obj.has_next %}
+          <a class="nav-link" href="?page={{page_obj.next_page_number}}{{page_suffix}}">{{page_obj.next_page_number}}</a>
+        {% endif %}
+        <a class="nav-link" href="?page=last{{page_suffix}}">Конец</a>
+      </nav>
+    </div>
+  {% endif %}
+{% endblock %}

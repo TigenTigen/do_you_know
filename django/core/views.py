@@ -10,33 +10,26 @@ from core.forms import *
 from core.mixins import *
 
 # base representaion of models
-class ThemeList(ListView):
-    queryset = Theme.validation.passed()
-    paginate_by = 10
+class ThemeList(OrderingMultipleObjectMixin, ListView):
+    model = Theme
 
 class ThemeDetail(ExtraContextSingleObjectMixin, DetailView):
     queryset = Theme.objects.all_with_perfetch()
 
-class BookList(ListView):
-    queryset = Book.validation.passed()
-    template_name='core/simple_list.html'
-    paginate_by = 20
+class BookList(OrderingMultipleObjectMixin, ListView):
+    model = Book
 
 class BookDetail(ExtraContextSingleObjectMixin, DetailView):
     queryset = Book.objects.all_with_perfetch()
 
-class MovieList(ListView):
-    queryset = Movie.validation.passed()
-    template_name='core/simple_list.html'
-    paginate_by = 20
+class MovieList(OrderingMultipleObjectMixin, ListView):
+    model = Movie
 
 class MovieDetail(ExtraContextSingleObjectMixin, DetailView):
     queryset = Movie.objects.all_with_perfetch()
 
-class PersonList(ListView):
-    queryset = Person.validation.passed()
-    template_name='core/simple_list.html'
-    paginate_by = 20
+class PersonList(OrderingMultipleObjectMixin, ListView):
+    model = Person
 
 class PersonDetail(ExtraContextSingleObjectMixin, DetailView):
     queryset = Person.objects.all_with_perfetch()
@@ -216,7 +209,6 @@ def created_by_user(request):
 class FavouriteThemeList(ListView):
     model = Theme
     template_name='core/theme_favorite_list.html'
-    paginate_by = 20
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
