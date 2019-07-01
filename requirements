@@ -2,5 +2,8 @@ django==2.1
 psycopg2-binary
 django-crispy-forms
 Pillow
+easy-thumbnails
+django-cleanup
+requests
 social-auth-app-django
 django-selectable

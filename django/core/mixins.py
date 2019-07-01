@@ -2,6 +2,7 @@ from django.views.generic.list import MultipleObjectMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.shortcuts import get_object_or_404
 from core.models import Theme
+from img.forms import ImageForm
 
 class ExtraContextSingleObjectMixin(SingleObjectMixin):
     def get_context_data(self, *args, **kwargs):
@@ -18,6 +19,7 @@ class ExtraContextSingleObjectMixin(SingleObjectMixin):
                 user_rating = object.ratings.filter(user_rated=user)
                 if user_rating.exists():
                     context.update({'current_user_rating': user_rating.get().value})
+        context.update({'image_form': ImageForm()})
         return context
 
 class OrderingMultipleObjectMixin(MultipleObjectMixin):

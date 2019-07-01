@@ -1,12 +1,16 @@
+{% load crispy_forms_tags %}
+
 {% block image_upload_form %}
   <div class="card text-white bg-success mb-3">
     <div class="card-header">
       Загрузить изображение
     </div>
     <div class="card-body">
-      <form class="" action="{{image_form_url}}" method="post" enctype="multipart/form-data">
+      <form class="" action="{% url 'img:upload_image' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{image_form}}
+        <input type="hidden" name="model" value="{{object.model}}">
+        <input type="hidden" name="object_id" value="{{object.pk}}">
+        {{image_form|crispy}}
         <button type="submit" class="btn btn-sm btn-light btn-block mt-2">Загрузить</button>
       </form>
     </div>

@@ -52,11 +52,8 @@
                 {% if object and object.theme_set.all %}
                   {% include 'layout/connected_theme_block.html' %}
                 {% endif %}
-                {% if object and object.likes >= 0 %}
-                  {% include 'layout/like_block.html' %}
-                {% endif %}
-                {% if object and image_form %}
-                  {% include 'layout/image_upload_form.html' %}
+                {% if object.is_validated and image_form %}
+                  {% include 'img/image_upload_form.html' %}
                 {% endif %}
               </div>
             </div>

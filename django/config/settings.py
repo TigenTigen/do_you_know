@@ -178,3 +178,18 @@ INSTALLED_APPS = ['core.apps.CoreConfig',] + INSTALLED_APPS
 
 # django-selectable settings:
 INSTALLED_APPS += ['selectable',]
+
+# img settings
+INSTALLED_APPS += ['img.apps.ImgConfig', 'django_cleanup', 'easy_thumbnails', ]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+THUMBNAIL_BASEDIR = 'thumbnails'
+THUMBNAIL_ALIASES = {
+    '': {
+        'default': {
+            'size': (0, 100),
+            'crop': 'scale',
+            'autocrop': True,
+        },
+    },
+}

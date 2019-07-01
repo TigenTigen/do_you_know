@@ -63,7 +63,11 @@
   {% block detail %}
   {% endblock detail %}
 
-  <div class="text-muted">
+  {% if object.is_validated and object.images.all %}
+    {% include 'img/img_preview_set.html' with img_preview_set=object.img_preview_set %}
+  {% endif %}
+
+  <div class="text-muted mt-5">
     <p class="m-0">Данную страницу создал(а): {{object.user.username}}, {{object.proposed}}</p>
     {% if object.is_validated %}
       <p class="m-0">{{object.validation_status}}, {{object.validated}}</p>

@@ -5,6 +5,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 import datetime
 
+from img.models import *
+
 AUTH_USER_MODEL = get_user_model()
 
 class Rating(models.Model):
@@ -41,6 +43,7 @@ class ValidatableModelManager(models.Manager):
         return qs
 
 class ValidatableModel(models.Model):
+    # validation
     approve_score = models.SmallIntegerField('Счетчик одобрения', default=0)
     is_validated_by_staff = models.BooleanField('Одобрен командой сайта', default=False)
     is_validated_by_users = models.BooleanField('Одобрен пользовательским голосованием', default=False)
@@ -49,8 +52,12 @@ class ValidatableModel(models.Model):
     created_by_user_id = models.SmallIntegerField('Пользователь, создавший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
     validated_by_staff_id = models.SmallIntegerField('Член команды сайта, одобривший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
     user_voted = models.ManyToManyField(to=AUTH_USER_MODEL)
+    # rating
     rating = models.FloatField('Оценка пользователей', default=0)
     ratings = GenericRelation(Rating, related_name='object')
+    # images
+    cover_img = models.ForeignKey(to=CoverThumbnail, on_delete=models.PROTECT, null=True, blank=True)
+    images = GenericRelation(Image, related_name='object')
 
     validation = ValidatableModelManager()
 
@@ -99,6 +106,9 @@ class ValidatableModel(models.Model):
         aggregation_dict = self.ratings.aggregate(rating=Avg('value'))
         self.rating = aggregation_dict.get('rating')
         self.save()
+
+    def img_preview_set(self):
+        return self.images.all()[:4:]
 
 class PersonManager(models.Manager):
     def all_with_perfetch(self):
