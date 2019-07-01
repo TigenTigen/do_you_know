@@ -10,6 +10,8 @@
   <form method="post">
     {% csrf_token %}
     {{form|crispy}}
+    <label>Обложка:</label>
+    {{image_form|crispy}}
     <button type="submit" class="btn btn-success">Сохранить</button>
   </form>
 {% endblock %}

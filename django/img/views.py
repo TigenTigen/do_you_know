@@ -15,21 +15,10 @@ from img.models import *
 @require_POST
 @login_required
 def upload_image(request):
-    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
-    object = get_object_or_404(model, pk=request.POST.get('object_id'))
-    url = request.POST.get('url')
-    if url and url != '':
-        r = requests.get(url)
-        file_data = {'image': SimpleUploadedFile('temp_image.jpg', r.content)}
-        image_form = ImageForm(request.POST, file_data)
-    else:
-        image_form = ImageForm(request.POST, request.FILES)
-    if image_form.is_valid():
-        new_image = image_form.save()
-        new_image.content_object = object
-        new_image.user = request.user
-        new_image.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+     model_name = request.POST.get('model')
+     object_id = request.POST.get('object_id')
+     new_image = ImageForm().self_processing(request, model_name, object_id)
+     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class ImageListView(ListView):
     def get_active_image(self):

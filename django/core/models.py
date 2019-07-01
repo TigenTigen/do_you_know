@@ -56,7 +56,6 @@ class ValidatableModel(models.Model):
     rating = models.FloatField('Оценка пользователей', default=0)
     ratings = GenericRelation(Rating, related_name='object')
     # images
-    cover_img = models.ForeignKey(to=CoverThumbnail, on_delete=models.PROTECT, null=True, blank=True)
     images = GenericRelation(Image, related_name='object')
 
     validation = ValidatableModelManager()
@@ -109,6 +108,12 @@ class ValidatableModel(models.Model):
 
     def img_preview_set(self):
         return self.images.all()[:4:]
+
+    def cover_img(self):
+        cover_img = self.images.filter(is_cover=True)
+        if cover_img.exists():
+            return cover_img.get()
+        return self.images.last()
 
 class PersonManager(models.Manager):
     def all_with_perfetch(self):
@@ -210,6 +215,7 @@ class Character(models.Model):
         verbose_name = 'Персонаж'
         verbose_name_plural = 'Персонажи'
         ordering = ('is_main', 'character')
+        unique_together = ['character', 'book']
 
     def __str__(self):
         return self.character.name

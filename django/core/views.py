@@ -9,6 +9,8 @@ from core.models import *
 from core.forms import *
 from core.mixins import *
 
+from img.forms import ImageForm
+
 # base representaion of models
 class ThemeList(OrderingMultipleObjectMixin, ListView):
     model = Theme
@@ -41,17 +43,20 @@ class CycleDetail(DetailView):
 @login_required
 def theme_create(request):
     form = ThemeAutoLookupForm(initial={'created_by_user_id': request.user.id})
+    image_form = ImageForm()
     if request.method == 'POST':
         form = ThemeAutoLookupForm(request.POST)
         if form.is_valid():
             new_object = form.save()
+            ImageForm().cover_processing(request, 'Theme', new_object.id)
             return redirect(new_object.get_absolute_url())
-    return render(request, 'core/theme_create.html', {'form': form})
+    return render(request, 'core/theme_create.html', {'form': form, 'image_form': image_form})
 
 @login_required
 def book_create(request, theme_id):
     theme = get_object_or_404(Theme, id=theme_id)
     form = BookAutoLookupForm(initial={'created_by_user_id': request.user.id})
+    image_form = ImageForm()
     cycles = theme.cycles.all()
     cycle = None
     if request.method == 'POST':
@@ -59,6 +64,7 @@ def book_create(request, theme_id):
         if form.is_valid():
             new_object = form.save()
             theme.books.add(new_object)
+            ImageForm().cover_processing(request, 'Book', new_object.id)
             number = form.cleaned_data.get('number')
             if number.isdigit():
                 new_cycle_title = request.POST.get('new_cycle_title')
@@ -79,13 +85,14 @@ def book_create(request, theme_id):
                         if not cycle in cycles:
                             theme.cycles.add(cycle)
             return redirect(new_object.get_absolute_url())
-    context = {'form': form, 'cycles': cycles}
+    context = {'form': form, 'image_form': image_form, 'cycles': cycles}
     return render(request, 'core/book_and_movie_create.html', context)
 
 @login_required
 def movie_create(request, theme_id):
     theme = get_object_or_404(Theme, id=theme_id)
     form = MovieAutoLookupForm(initial={'created_by_user_id': request.user.id})
+    image_form = ImageForm()
     cycles = theme.cycles.all()
     cycle = None
     if request.method == 'POST':
@@ -93,6 +100,7 @@ def movie_create(request, theme_id):
         if form.is_valid():
             new_object = form.save()
             theme.movies.add(new_object)
+            ImageForm().cover_processing(request, 'Movie', new_object.id)
             number = form.cleaned_data.get('number')
             if number.isdigit():
                 new_cycle_title = request.POST.get('new_cycle_title')
@@ -113,16 +121,18 @@ def movie_create(request, theme_id):
                         if not cycle in cycles:
                             theme.cycles.add(cycle)
             return redirect(new_object.get_absolute_url())
-    context = {'form': form, 'cycles': cycles}
+    context = {'form': form, 'image_form': image_form, 'cycles': cycles}
     return render(request, 'core/book_and_movie_create.html', context)
 
 @login_required
 def person_create(request, related_name, pk):
     new_object = PersonForm().self_processing(request, related_name, pk)
     if isinstance(new_object, Person):
+        ImageForm().cover_processing(request, 'Person', new_object.id)
         return redirect(new_object.get_absolute_url())
     form = new_object
-    return render(request, 'core/person_create.html', {'form': form})
+    image_form = ImageForm()
+    return render(request, 'core/person_create.html', {'form': form, 'image_form': image_form})
 
 @login_required
 def person_create_as_role(request, pk):

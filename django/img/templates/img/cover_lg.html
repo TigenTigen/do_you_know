@@ -1,0 +1,7 @@
+{% load thumbnail %}
+
+{% block cover_lg %}
+  <div class="d-flex flex-row justify-content-around">
+    <img src="{% thumbnail cover.image 'cover_lg' %}" class="m-2" alt="Изображение отсутсвует">
+  </div>
+{% endblock %}

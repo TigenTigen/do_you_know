@@ -15,6 +15,7 @@
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle text-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Модерация</a>
       <div class="dropdown-menu">
+        <a class="dropdown-item" href="{% url 'core:theme_create' %}">Создать тему</a>
         <a class="dropdown-item" href="{% url 'core:theme_list_validation' %}">Темы</a>
         <a class="dropdown-item" href="{% url 'core:book_list_validation' %}">Книги</a>
         <a class="dropdown-item" href="{% url 'core:movie_list_validation' %}">Фильмы</a>

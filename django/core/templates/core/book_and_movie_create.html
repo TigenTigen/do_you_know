@@ -34,6 +34,8 @@
       <input type="text" class="form-control my-2" name="new_cycle_title" maxlength="100" placeholder="Название">
       <textarea rows="2" class="form-control" name="new_cycle_description" placeholder="Описание"></textarea>
     {% endif %}
+    <label>Обложка:</label>
+    {{image_form|crispy}}
     <button type="submit" class="btn btn-success my-2">Сохранить</button>
   </form>
 {% endblock %}

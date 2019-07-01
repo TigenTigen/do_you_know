@@ -32,7 +32,7 @@ class PersonForm(forms.ModelForm):
         widgets = {'created_by_user_id': forms.HiddenInput()}
 
     def clean_description(self):
-        description = self.cleaned_data.get['description']
+        description = self.cleaned_data.get('description')
         if description == '':
             description = None
         return description

@@ -56,9 +56,16 @@
     {% endif %}
   {% endif %}
 
-  <h1>{{object}}</h1>
-  <p>Описание: {{object.description|default_if_none:" - "}}</p>
-  <p>{% for key, value in object.extras.items %}   {{key}}: {{value|default_if_none:"-"}},   {% endfor %}</p>
+  <div class="row">
+    <div class="col-4">
+      {% include 'img/cover_lg.html' with cover=object.cover_img %}
+    </div>
+    <div class="col">
+      <h1>{{object}}</h1>
+      <p>Описание: {{object.description|default_if_none:" - "}}</p>
+      <p>{% for key, value in object.extras.items %}   {{key}}: {{value|default_if_none:"-"}},   {% endfor %}</p>
+    </div>
+  </div>
 
   {% block detail %}
   {% endblock detail %}
