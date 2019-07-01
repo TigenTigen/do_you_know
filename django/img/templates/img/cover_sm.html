@@ -1,7 +1,11 @@
 {% load thumbnail %}
 
-{% block cover_lg %}
-  <div class="d-flex flex-row justify-content-around">
-    <img src="{% thumbnail cover.image 'cover_sm' %}" class="m-2" alt="Изображение отсутсвует">
+{% block cover_sm %}
+  <div class="d-flex flex-row justify-content-center">
+    {% if cover.image %}
+      <img src="{% thumbnail cover.image 'cover_sm' %}" alt="{{object}}" class="card-img-top" height="150">
+    {% else %}
+      <img src="https://via.placeholder.com/150" alt="{{object}}" class="card-img-top">
+    {% endif %}
   </div>
 {% endblock %}

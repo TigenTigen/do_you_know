@@ -192,7 +192,12 @@ THUMBNAIL_ALIASES = {
             'autocrop': True,
         },
         'cover_lg': {
-            'size': (150, 200),
+            'size': (200, 270),
+            'crop': 'smart',
+            'autocrop': True,
+        },
+        'cover_sm': {
+            'size': (150, 150),
             'crop': 'smart',
             'autocrop': True,
         },

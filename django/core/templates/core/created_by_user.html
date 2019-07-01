@@ -2,15 +2,17 @@
 
 {% block content %}
   {% for title, qs in created_by_user_dict.items %}
-    <p>{{title}}:</p>
-    <ul>
+    <h3 class="my-4">{{title}}:</h3>
+    <dl class="row">
       {% for one in qs %}
-        <li>
-          {{one}} ... {{one.validation_status}} <a href="{{one.get_absolute_url}}">  >>  </a>
-        </li>
-      {% empty %}
-        Данные отсутсвуют
+        <dt class="col-sm-4">
+          <a href="{{one.get_absolute_url}}" class="{{one.color}}">{{one}}</a>
+        </dt>
+        <dd class="col-sm-8">
+          {{one.validation_status}}
+        </dd>
       {% endfor %}
-    </ul>
+    </dl>
+    <hr>
   {% endfor %}
 {% endblock %}

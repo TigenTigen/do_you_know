@@ -1,53 +1,42 @@
 {% extends 'core/common_detail.html' %}
 
 {% block detail %}
-  <p class="h-5 m-0">Создатели:
-    {% for creator in object.creators.all %}
-      <a href="{{creator.get_absolute_url}}">{{creator}}</a>{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-    ...
-    <a href="{% url 'core:person_create' related_name='creator' pk=object.pk %}">Добавить</a>
-  </p>
-  {% if object.cycles.all %}
-    <p class="h-5 m-0">Циклы:</p>
-    <ul>
-      {% for cycle in object.cycles.all %}
-      <li>
-        <a href="{{cycle.get_absolute_url}}">
-          {{cycle}}
-        </a>
-      </li>
+  <div class="my-4">
+    <p class="h-5 m-0">
+      Создатели:
+      {% for creator in object.creators.all %}
+        <a href="{{creator.get_absolute_url}}" class="{{creator.color}}">{{creator}},</a>
       {% endfor %}
+      {% if object.is_validated %}
+        ...
+        <a href="{% url 'core:person_create' related_name='creator' pk=object.pk %}">Добавить</a>
+      {% endif %}
+    </p>
+    {% if object.cycles.all %}
+      <p class="h-5 m-0 mt-2">Циклы:</p>
+      <ul class="list-unstyled">
+        {% for cycle in object.cycles.all %}
+          <li><a href="{{cycle.get_absolute_url}}">{{cycle}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <p class="h-5 m-0">Книги:</p>
+    <ul class="list-unstyled">
+      {% for book in object.books.all %}
+        <li><a href="{{book.get_absolute_url}}" class="{{book.color}}">{{book}}</a></li>
+      {% endfor %}
+      {% if object.is_validated %}
+        <li><a href="{% url 'core:book_create' theme_id=object.id %}">Добавить</a></li>
+      {% endif %}
     </ul>
-  {% endif %}
-  <p class="h-5 m-0">Книги:</p>
-  <ul>
-    {% for book in object.books.all %}
-      <li>
-        <a href="{{book.get_absolute_url}}">
-          {{book}}
-        </a>
-      </li>
-    {% endfor %}
-    <li>
-      <a href="{% url 'core:book_create' theme_id=object.id %}">
-        Добавить
-      </a>
-    </li>
-  </ul>
-  <p class="h-5 m-0">Фильмы:</p>
-  <ul>
-    {% for movie in object.movies.all %}
-      <li>
-        <a href="{{movie.get_absolute_url}}">
-          {{movie}}
-        </a>
-      </li>
-    {% endfor %}
-    <li>
-      <a href="{% url 'core:movie_create' theme_id=object.id %}">
-        Добавить
-      </a>
-    </li>
-  </ul>
+    <p class="h-5 m-0">Фильмы:</p>
+    <ul class="list-unstyled">
+      {% for movie in object.movies.all %}
+        <li><a href="{{movie.get_absolute_url}}" class="{{movie.color}}">{{movie}}</a></li>
+      {% endfor %}
+      {% if object.is_validated %}
+        <li><a href="{% url 'core:movie_create' theme_id=object.id %}">Добавить</a></li>
+      {% endif %}
+    </ul>
+  </div>
 {% endblock %}

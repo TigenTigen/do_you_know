@@ -56,14 +56,19 @@
     {% endif %}
   {% endif %}
 
-  <div class="row">
+  <div class="row my-2">
     <div class="col-4">
       {% include 'img/cover_lg.html' with cover=object.cover_img %}
     </div>
     <div class="col">
       <h1>{{object}}</h1>
-      <p>Описание: {{object.description|default_if_none:" - "}}</p>
-      <p>{% for key, value in object.extras.items %}   {{key}}: {{value|default_if_none:"-"}},   {% endfor %}</p>
+      {% for number in object.number_set.all %}
+        <p class="h-5 m-0"><a href="{{number.get_absolute_url}}" class="text-muted">{{number}}</a></p>
+      {% endfor %}
+      {% for key, value in object.extras.items %}
+        <p class="m-0">{{key}}: {{value|default_if_none:"-"}}</p>
+      {% endfor %}
+      <p>{{object.description}}</p>
     </div>
   </div>
 

@@ -29,7 +29,7 @@ class OrderingMultipleObjectMixin(MultipleObjectMixin):
     def get_card_type(self):
         card_type = self.request.GET.get('card_type')
         if not card_type:
-            if self.model == 'Theme':
+            if self.model == Theme:
                 return 'view_module'
             return 'view_list'
         return card_type
@@ -41,6 +41,7 @@ class OrderingMultipleObjectMixin(MultipleObjectMixin):
         return order
 
     def get_queryset(self, *args, **kwargs):
+        user = self.request.user
         model = self.model
         qs = model.validation.passed()
         order = self.get_order()

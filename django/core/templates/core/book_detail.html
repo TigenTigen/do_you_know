@@ -1,35 +1,30 @@
 {% extends 'core/common_detail.html' %}
 
 {% block detail %}
-  {% for number in object.number_set.all %}
-    <p class="h-5 m-0"><a href="{{number.get_absolute_url}}">{{number}}</a></p>
-  {% endfor %}
-  <p class="h-5">
-    Автор:
-    {% if object.author %}
-      <a href="{{object.author.get_absolute_url}}">
-        {{object.author}}
-      </a>
-    {% else %}
-      <a href="{% url 'core:person_create' related_name='author' pk=object.pk %}">Добавить</a>
-    {% endif %}
-  </p>
-  {% if object.characters %}
+  <div class="my-4">
+    <p class="h-5">
+      Автор:
+      {% if object.author %}
+        <a href="{{object.author.get_absolute_url}}" class="{{object.color}}">{{object.author}}</a>
+      {% elif object.is_validated %}
+        <a href="{% url 'core:person_create' related_name='author' pk=object.pk %}">Добавить</a>
+      {% endif %}
+    </p>
     <p class="h-5 m-0">Персонажи:</p>
-    <ul>
+    <dl class="row">
       {% for character in object.character_set.all %}
-        <li>
-          <a href="{{character.get_absolute_url}}">
-            {{character}}.
-          </a>
-          Main: {{character.is_main|yesno:"да,нет"}}. description: {{character.description}}
-        </li>
+        <dt class="col-sm-3">
+          <a href="{{character.get_absolute_url}}" class="{{character.character.color}}">{{character}}</a>
+        </dt>
+        <dd class="col-sm-9">
+          {{character.description}}
+        </dd>
       {% endfor %}
-      <li>
-        <a href="{% url 'core:person_create' related_name='character' pk=object.pk %}">
-          Добавить
-        </a>
-      </li>
-    </ul>
-  {% endif %}
+    </dl>
+    {% if object.is_validated %}
+      <a href="{% url 'core:person_create' related_name='character' pk=object.pk %}">
+        Добавить персонажа
+      </a>
+    {% endif %}
+  </div>
 {% endblock %}

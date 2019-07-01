@@ -1,42 +1,43 @@
 {% extends 'core/common_detail.html' %}
 
 {% block detail %}
-  {% for number in object.number_set.all %}
-    <p class="h-5 m-0"><a href="{{number.get_absolute_url}}">{{number}}</a></p>
-  {% endfor %}
-  <p class="h-5">
-    Режисер:
-    {% if object.director %}
-      <a href="{{object.director.get_absolute_url}}">
-        {{object.director}}
-      </a>
-    {% else %}
-      <a href="{% url 'core:person_create' related_name='director' pk=object.pk %}">Добавить</a>
-    {% endif %}
-  </p>
-  <p class="h-5">
-    Сценарист:
-    {% if object.writer %}
-      <a href="{{object.writer.get_absolute_url}}">
-        {{object.writer}}
-      </a>
-    {% else %}
-      <a href="{% url 'core:person_create' related_name='writer' pk=object.pk %}">Добавить</a>
-    {% endif %}
-  </p>
-    <p class="h-5 m-0">Персонажи:</p>
-    <ul>
-      {% for one in object.roles.all %}
-        <li>
-          <a href="{{one.actor.get_absolute_url}}">
-            {{one.actor}}
-          </a>
-          /
-          <a href="{{one.character.get_absolute_url}}">
-            {{one.character}}
-          </a>
-        </li>
+  <div class="my-4">
+    <p class="h-5 m-0">
+      Режисер:
+      {% if object.director %}
+        <a href="{{object.director.get_absolute_url}}" class="{{object.director.color}}">{{object.director}}</a>
+      {% elif object.is_validated %}
+        <a href="{% url 'core:person_create' related_name='director' pk=object.pk %}">Добавить</a>
+      {% endif %}
+    </p>
+    <p class="h-5 m-0">
+      Сценарист:
+      {% if object.writer %}
+        <a href="{{object.writer.get_absolute_url}}" class="{{object.writer.color}}">{{object.writer}}</a>
+      {% elif object.is_validated %}
+        <a href="{% url 'core:person_create' related_name='writer' pk=object.pk %}">Добавить</a>
+      {% endif %}
+    </p>
+    <p class="h-5 my-2">Персонажи:</p>
+    <div class="container my-2">
+      {% for role in object.roles.all %}
+        <div class="row">
+          <div class="col-3">
+            <a href="{{role.actor.get_absolute_url}}" class="{{role.actor.color}}">{{role.actor}}</a>
+          </div>
+          <div class="col-3">
+            <a href="{{role.character.get_absolute_url}}" class="{{role.character.color}}">{{role.character}}</a>
+          </div>
+          <div class="col">
+            {{role.description}}
+          </div>
+        </div>
       {% endfor %}
-      <li><a href="{% url 'core:person_create_as_role' pk=object.pk %}">Добавить</a></li>
-    </ul>
+    </div>
+    {% if object.is_validated %}
+      <a href="{% url 'core:person_create_as_role' pk=object.pk %}">
+        Добавить персонажа
+      </a>
+    {% endif %}
+  </div>
 {% endblock %}

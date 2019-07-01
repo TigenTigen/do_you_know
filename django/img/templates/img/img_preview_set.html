@@ -1,17 +1,17 @@
 {% load thumbnail %}
 
 {% block img_preview_set %}
-<div class="">
-  <p>Изображения:</p>
-  <div class="d-flex flex-row justify-content-around">
-    {% for img in img_preview_set %}
-      <a href="{% url 'img:list_image' img_id=img.id %}">
-        <img src="{% thumbnail img.image 'default' %}" class="m-2">
-      </a>
-    {% empty %}
-      no images
-    {% endfor %}
+  <div class="my-4">
+    <p>Изображения:</p>
+    <div class="d-flex flex-row justify-content-around">
+      {% for img in img_preview_set %}
+        <a href="{% url 'img:list_image' img_id=img.id %}">
+          <img src="{% thumbnail img.image 'default' %}" class="m-2">
+        </a>
+      {% empty %}
+        no images
+      {% endfor %}
+    </div>
+    <p class="my-2">Всего: {{object.images.count}}   ...  <a href="{% url 'img:list_image' img_id=object.img_preview_set.first.id %}">Просмотреть все</a></p>
   </div>
-  <p>Всего: {{object.images.count}}   ...  <a href="{% url 'img:list_image' img_id=object.img_preview_set.first.id %}">Просмотреть все</a></p>
-</div>
 {% endblock %}

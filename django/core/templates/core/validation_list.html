@@ -7,8 +7,10 @@
       <a href="{{object.get_absolute_url}}">{{object}}</a>
     </div>
     <div class="card-body">
-      <p class="card-text">Описание: {{object.description|default_if_none:"-"}}</p>
-      <p class="card-text">{% for key, value in object.extras.items %}   {{key}}: {{value|default_if_none:"-"}},   {% endfor %}</p>
+      <p class="card-text m-0">{{object.description|default_if_none:""}}</p>
+      {% for key, value in object.extras.items %}
+        <p class="card-text m-0">{{key}}: {{value|default_if_none:"-"}}</p>
+      {% endfor %}
       <p class="card-text text-muted">{{object.user.username}}, {{object.proposed}}</p>
     </div>
     <div class="card-footer">

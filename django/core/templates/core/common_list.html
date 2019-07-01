@@ -59,13 +59,7 @@
     <hr>
   </div>
 
-  <div class="card-deck">
-    {% for object in object_list %}
-      {% include card_path %}
-    {% empty %}
-      <p>Данные отсутствуют</p>
-    {% endfor %}
-  </div>
+  {% include card_path %}
 
   {% if page_obj.has_other_pages %}
     <div class="mt-auto">

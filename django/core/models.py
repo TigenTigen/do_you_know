@@ -66,6 +66,11 @@ class ValidatableModel(models.Model):
     def is_validated(self):
         return (self.is_validated_by_staff or self.is_validated_by_users)
 
+    def color(self):
+        if self.is_validated():
+            return 'text-dark'
+        return 'text-muted'
+
     def user(self):
         return AUTH_USER_MODEL.objects.get(id=self.created_by_user_id)
 
@@ -77,7 +82,7 @@ class ValidatableModel(models.Model):
 
     def validated_by_staff(self, user):
         self.is_validated_by_staff = True
-        self.validated = datetime.datetime.now()
+        self.validated = datetime.now()
         self.validated_by_staff_id = user.id
         self.save()
 
@@ -368,10 +373,10 @@ class Theme(ValidatableModel):
         list = []
         for person in self.creators.all():
             if person.is_validated():
-                list.append(person.__str_())
-        if list:
+                list.append(person.name)
+        if list != []:
             return {'Создатели': ', '.join(list)}
-        return {'Создатели': None}
+        return None
 
     def __str__(self):
         return self.title

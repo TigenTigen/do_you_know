@@ -207,12 +207,16 @@ def validation(request):
 @login_required()
 def created_by_user(request):
     user_id = request.user.id
-    created_by_user_dict = {
+    dict = {
         'Темы': Theme.validation.user_created(user_id),
         'Книги': Book.validation.user_created(user_id),
         'Фильмы': Movie.validation.user_created(user_id),
         'Люди': Person.validation.user_created(user_id),
     }
+    created_by_user_dict = {}
+    for key in dict.keys():
+        if dict[key]:
+            created_by_user_dict.update({key: dict[key]})
     return render(request, 'core/created_by_user.html', {'created_by_user_dict': created_by_user_dict})
 
 # favorite_themes

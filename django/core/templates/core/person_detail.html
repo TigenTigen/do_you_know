@@ -1,94 +1,65 @@
 {% extends 'core/common_detail.html' %}
 
 {% block detail %}
-  {% if object.created.all %}
-    <p class="m-0">Созданные миры:</p>
-    <ul>
-      {% for theme in object.created.all %}
-        <li>
-          <a href="{{theme.get_absolute_url}}">
-            {{theme}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  {% if object.written_books.all %}
-    <p class="m-0">Написанные книги:</p>
-    <ul>
-      {% for book in object.written_books.all %}
-        <li>
-          <a href="{{book.get_absolute_url}}">
-            {{book}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  {% if object.character_set.all.all %}
-    <p class="m-0">Появления в книгах:</p>
-    <ul>
-      {% for one in object.character_set.all %}
-        <li>
-          <a href="{{one.book.get_absolute_url}}">
-            {{one.book}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  {% if object.directed.all %}
-    <p class="m-0">Режиссер:</p>
-    <ul>
-      {% for movie in object.directed.all %}
-        <li>
-          <a href="{{movie.get_absolute_url}}">
-            {{movie}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  {% if object.wrote.all %}
-    <p class="m-0">Сценарии:</p>
-    <ul>
-      {% for movie in object.wrote.all %}
-        <li>
-          <a href="{{movie.get_absolute_url}}">
-            {{movie}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
-  {% if object.roles.all or object.acted_by.all %}
-    <p class="m-0">Появления в фильмах:</p>
-    <ul>
-      {% for one in object.roles.all %}
-        <li>
-          <a href="{{one.character.get_absolute_url}}">
-            {{one.character}}
-          </a>
-          <a href="{{one.movie.get_absolute_url}}">
-            / {{one.movie}}
-          </a>
-        </li>
-      {% endfor %}
-      {% for one in object.acted_by.all %}
-        <li>
-          <a href="{{one.actor.get_absolute_url}}">
-            {{one.actor}}
-          </a>
-          <a href="{{one.movie.get_absolute_url}}">
-            / {{one.movie}}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  <div class="my-4">
+    {% if object.created.all %}
+      <p class="m-0">Созданные миры:</p>
+      <ul class="list-unstyled">
+        {% for theme in object.created.all %}
+          <li><a href="{{theme.get_absolute_url}}" class="{{theme.color}}">{{theme}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if object.written_books.all %}
+      <p class="m-0">Написанные книги:</p>
+      <ul class="list-unstyled">
+        {% for book in object.written_books.all %}
+          <li><a href="{{book.get_absolute_url}}" class="{{book.color}}">{{book}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if object.character_set.all.all %}
+      <p class="m-0">Появления в книгах:</p>
+      <ul class="list-unstyled">
+        {% for one in object.character_set.all %}
+          <li><a href="{{one.book.get_absolute_url}}" class="{{one.book.color}}">{{one.book}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if object.directed.all %}
+      <p class="m-0">Режиссер:</p>
+      <ul class="list-unstyled">
+        {% for movie in object.directed.all %}
+          <li><a href="{{movie.get_absolute_url}}" class="{{movie.color}}">{{movie}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if object.wrote.all %}
+      <p class="m-0">Сценарии:</p>
+      <ul class="list-unstyled">
+        {% for movie in object.wrote.all %}
+          <li><a href="{{movie.get_absolute_url}}" class="{{movie.color}}">{{movie}}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if object.roles.all or object.acted_by.all %}
+      <p class="m-0">Появления в фильмах:</p>
+      <ul class="list-unstyled">
+        {% for role in object.roles.all %}
+          <li>
+            <a href="{{role.character.get_absolute_url}}" class="{{role.character.color}}">{{role.character}}</a>
+            /
+            <a href="{{role.movie.get_absolute_url}}" class="{{role.movie.color}}">{{role.movie}}</a>
+          </li>
+        {% endfor %}
+        {% for role in object.acted_by.all %}
+          <li>
+            <a href="{{role.actor.get_absolute_url}}" class="{{role.actor.color}}">{{role.actor}}</a>
+            /
+            <a href="{{role.movie.get_absolute_url}}" class="{{role.movie.color}}">{{role.movie}}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
 {% endblock %}
