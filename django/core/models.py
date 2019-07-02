@@ -9,6 +9,48 @@ from img.models import *
 
 AUTH_USER_MODEL = get_user_model()
 
+class Question(models.Model):
+    content_type = models.ForeignKey(to=ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='questions')
+    created = models.DateTimeField('Дата создания пользователем', auto_now_add=True)
+    text = models.TextField('Текст вопроса')
+    explanation = models.TextField('ОбЪяснения ответа', null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Вопрос'
+        verbose_name_plural = 'Вопросы'
+        ordering = ['-created']
+
+    def __str__(self):
+        return self.text
+
+    def right_answer(self):
+        right_answer = self.answers.filter(is_right=True)
+        if right_answer.count() != 1:
+            self.delete()
+        else:
+            return right_answer.get()
+
+class Answer(models.Model):
+    text = models.CharField('Текст ответа', max_length=100)
+    is_right = models.BooleanField('Правильный ответ', default=False)
+    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name='answers')
+
+    class Meta:
+        verbose_name = 'Ответ'
+        verbose_name_plural = 'Ответы'
+        ordering = ['question', 'text']
+
+    def __str__(self):
+        return self.text
+
+    def color(self):
+        if self.is_right:
+            return 'text-success'
+        return 'text-dark'
+
 class Rating(models.Model):
     value = models.PositiveSmallIntegerField('', default=0)
     user_rated = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ratings')
@@ -57,6 +99,8 @@ class ValidatableModel(models.Model):
     ratings = GenericRelation(Rating, related_name='object')
     # images
     images = GenericRelation(Image, related_name='object')
+    # questions
+    questions = GenericRelation(Question, related_name='object')
 
     validation = ValidatableModelManager()
 

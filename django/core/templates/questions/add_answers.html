@@ -1,0 +1,37 @@
+{% extends 'layout/wrapper.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <p>Вы создали новый вопрос:</p>
+  <strong>{{formset.instance}}</strong>
+  <hr>
+
+  <p>Теперь необходимо на него ответить!</p>
+  <p>
+    Добавьте несколько вариантов ответа (не менее двух)
+    и отметьте тот из них,
+    что является правильным ответом на заданный вопрос:
+  </p>
+
+  <form method="post" class="m-0 p-0">
+    {% csrf_token %}
+    <div class="col-8">
+      {{formset.management_form}}
+      {% for error in formset.non_form_errors %}
+        <p class="text-danger">{{error}}</p>
+      {% endfor %}
+      {% for form in formset %}
+        <div class="d-flex flex-row justify-content-between align-items-center">
+          {{form|crispy}}
+        </div>
+      {% endfor %}
+    </div>
+    <span class="">
+      Пожалуйста, объясните почему выбранный Вами ответ является правильным:
+      оставьте ссылку на определенный момент в книге или фильме или ссылку на источник в сети Интернет
+    </span>
+    <textarea name="explanation" rows="4" class="form-control my-2"></textarea>
+    <button type="submit" class="btn btn-success" name='add'>Сохранить</button>
+  </form>
+{% endblock %}

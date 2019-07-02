@@ -1,0 +1,16 @@
+{% block question_form %}
+  <div class="card text-white bg-success mb-3">
+    <div class="card-header">
+      Добавить вопрос
+    </div>
+    <div class="card-body">
+      <form class="" action="{% url 'core:question_create' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="model" value="{{object.model}}">
+        <input type="hidden" name="object_id" value="{{object.pk}}">
+        <textarea name="question_text" rows="3" placeholder="Введите вопрос..." class="form-control"></textarea>
+        <button type="submit" class="btn btn-sm btn-light btn-block mt-2">Сохранить</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

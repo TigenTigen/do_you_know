@@ -33,4 +33,8 @@ urlpatterns = [
     path('validation/', validation, name='validation'),
     path('created_by_user/', created_by_user, name='created_by_user'),
     path('rate/', rate, name='rate'),
+        #questions
+    path('questions/create/', create_question, name='question_create'),
+    path('questions/<int:pk>/', QuestionDetail.as_view(), name='question_detail'),
+    path('questions/<int:pk>/answers/add/', add_answers, name='add_answers'),
 ]

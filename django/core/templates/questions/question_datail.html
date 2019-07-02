@@ -1,0 +1,15 @@
+{% extends 'layout/wrapper.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h3>{{object.text}}</h3>
+  <p class="m-0">Вопрос относится к <a href="{{object.content_object.get_absolute_url}}">{{object.content_object}}</a></p>
+  <p class="m-0">Добавил: {{object.user.username}}, {{object.created}}</p>
+
+  <p class="m-0 mt-2">Ответы:</p>
+  {% for answer in object.answers.all %}
+    <p class="{{answer.color}} m-0">{{forloop.counter}}: {{answer}}</p>
+  {% endfor %}
+  <p>Пояснение от автора: {{object.explanation|default_if_none:" - "}}</p>
+{% endblock %}

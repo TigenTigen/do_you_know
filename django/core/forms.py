@@ -162,3 +162,21 @@ class NumberForm(forms.ModelForm):
     class Meta:
         model = Number
         fields = '__all__'
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['text', 'is_right',]
+        labels = {'text': ''}
+
+class AnswerBaseFormSet(forms.BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        answers = [form.cleaned_data['text'] for form in self.forms if 'text' in form.cleaned_data]
+        if len(answers) < 2:
+            raise ValidationError('Необходимо задать минимум два ответа!')
+        is_right_list = [str(form.cleaned_data['is_right']) for form in self.forms]
+        if not 'True' in is_right_list:
+            raise ValidationError('Необходимо выбрать правильный ответ!')
+        elif is_right_list.count('True') > 1:
+            raise ValidationError('У вопроса может быть только один правильный ответ!')

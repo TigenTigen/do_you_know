@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.apps import apps
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
+from django.forms import inlineformset_factory
 
 from core.models import *
 from core.forms import *
@@ -255,3 +256,37 @@ def rate(request):
         user.ratings.create(value=value, content_object=object)
     object.refresh_ratig()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+# questions
+@login_required
+@require_POST
+def create_question(request):
+    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+    object = get_object_or_404(model, id=request.POST.get('object_id'))
+    text = request.POST.get('question_text')
+    if text and text != '':
+        new_question = object.questions.create(text=text, user=request.user)
+        return redirect('core:add_answers', pk=new_question.pk)
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def add_answers(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    AnswerFormset = inlineformset_factory(Question, Answer, form=AnswerForm, formset=AnswerBaseFormSet, extra=4, can_delete=False)
+    formset = AnswerFormset(instance=question)
+    if 'add' in request.POST:
+        formset = AnswerFormset(request.POST, instance=question)
+        if formset.is_valid():
+            formset.save()
+            explanation = request.POST.get('explanation')
+            if explanation and explanation != 0:
+                question.explanation = explanation
+                question.save()
+            return redirect('core:question_detail', pk=pk)
+    context = {'formset': formset}
+    return render(request, 'questions/add_answers.html', context)
+
+class QuestionDetail(DetailView):
+    model = Question
+    template_name = 'questions/question_datail.html'
