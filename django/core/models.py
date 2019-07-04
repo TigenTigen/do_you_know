@@ -9,14 +9,28 @@ from img.models import *
 
 AUTH_USER_MODEL = get_user_model()
 
+class QuestionManager(models.Manager):
+    def get_random_question(self, user):
+        questions = self.get_queryset()
+        questions = questions.exclude(user=user).exclude(replies__user=user)
+        if not questions.exists():
+            return None
+        return questions.order_by('?').first()
+
 class Question(models.Model):
     content_type = models.ForeignKey(to=ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
+    theme = models.ForeignKey(to='Theme', on_delete=models.CASCADE, related_name='theme_questions', null=True, blank=True)
     user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='questions')
     created = models.DateTimeField('Дата создания пользователем', auto_now_add=True)
     text = models.TextField('Текст вопроса')
     explanation = models.TextField('ОбЪяснения ответа', null=True, blank=True)
+    # rating
+    rating = models.FloatField('Оценка пользователей', default=0)
+    ratings = GenericRelation(to='Rating', related_name='object')
+
+    objects = QuestionManager()
 
     class Meta:
         verbose_name = 'Вопрос'
@@ -32,6 +46,11 @@ class Question(models.Model):
             self.delete()
         else:
             return right_answer.get()
+
+    def refresh_ratig(self):
+        aggregation_dict = self.ratings.aggregate(rating=Avg('value'))
+        self.rating = aggregation_dict.get('rating')
+        self.save()
 
 class Answer(models.Model):
     text = models.CharField('Текст ответа', max_length=100)
@@ -50,6 +69,26 @@ class Answer(models.Model):
         if self.is_right:
             return 'text-success'
         return 'text-dark'
+
+    def frequence(self):
+        replies_for_this_question = self.question.replies.count()
+        if replies_for_this_question != 0:
+            replies_for_this_answer = self.replies.count()
+            frequence = (replies_for_this_answer / replies_for_this_question)*100
+            return frequence
+        return 0
+
+class UserReplyRecord(models.Model):
+    user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='replies')
+    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name='replies')
+    answer = models.ForeignKey(to=Answer, on_delete=models.CASCADE, related_name='replies', null=True, blank=True)
+    timedate = models.DateTimeField('Дата ответа', auto_now_add=True)
+    outcome = models.BooleanField('Результат проверки ответа', default=None, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Ответ пользователя на вопрос'
+        verbose_name_plural = 'Ответы пользователей на вопросы'
+        unique_together = ['user', 'question', 'answer']
 
 class Rating(models.Model):
     value = models.PositiveSmallIntegerField('', default=0)
@@ -163,6 +202,12 @@ class ValidatableModel(models.Model):
         if cover_img.exists():
             return cover_img.get()
         return self.images.last()
+
+    def get_question_to_ask(self, user):
+        questions = self.questions.exclude(user=user).exclude(replies__user=user)
+        if not questions.exists():
+            return None
+        return questions.first()
 
 class PersonManager(models.Manager):
     def all_with_perfetch(self):
@@ -433,3 +478,10 @@ class Theme(ValidatableModel):
 
     def favorite_count(self):
         return self.favorited_by.distinct().count()
+
+    def get_question_to_ask(self, user):
+        questions = self.theme_questions.all()
+        questions = questions.exclude(user=user).exclude(replies__user=user)
+        if not questions.exists():
+            return None
+        return questions.first()

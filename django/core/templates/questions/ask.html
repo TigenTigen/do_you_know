@@ -1,0 +1,23 @@
+{% extends 'layout/wrapper.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  {% if not question %}
+    <p>Данные отсутсвуют</p>
+  {% else %}
+    <p>Вопрос:</p>
+    <p><strong>{{question.text}}</strong></p>
+    <p>Варианты ответов:</p>
+    <form action="{% url 'core:check_answer' pk=question.pk %}" method="post">
+      {% csrf_token %}
+      <div class="btn-group-vertical">
+        {% for answer in question.answers.all %}
+          <button type="submit" class="btn btn-success" name="checked_answer" value={{answer.id}}>
+            {{answer}}
+          </button>
+        {% endfor %}
+      </div>
+    </form>
+  {% endif %}
+{% endblock %}

@@ -175,7 +175,7 @@ class AnswerBaseFormSet(forms.BaseInlineFormSet):
         answers = [form.cleaned_data['text'] for form in self.forms if 'text' in form.cleaned_data]
         if len(answers) < 2:
             raise ValidationError('Необходимо задать минимум два ответа!')
-        is_right_list = [str(form.cleaned_data['is_right']) for form in self.forms]
+        is_right_list = [str(form.cleaned_data['is_right']) for form in self.forms if 'is_right' in form.cleaned_data]
         if not 'True' in is_right_list:
             raise ValidationError('Необходимо выбрать правильный ответ!')
         elif is_right_list.count('True') > 1:

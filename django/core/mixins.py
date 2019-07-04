@@ -20,6 +20,17 @@ class ExtraContextSingleObjectMixin(SingleObjectMixin):
                 if user_rating.exists():
                     context.update({'current_user_rating': user_rating.get().value})
         context.update({'image_form': ImageForm()})
+        questions = object.questions.all()
+        if questions.exists() and user.is_authenticated:
+            replied_questions = questions.filter(replies__user=user)
+            created_questions = questions.filter(user=user)
+            question_total_dict = {
+                  'Всего вопросов': questions.count(),
+                  'Отвечено Вами': replied_questions.count(),
+                  'Добавлено Вами': created_questions.count(),
+                  'Доступно Вам': questions.count() - replied_questions.count() - created_questions.count(),
+            }
+            context.update({'question_total_dict': question_total_dict})
         return context
 
 class OrderingMultipleObjectMixin(MultipleObjectMixin):

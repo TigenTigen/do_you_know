@@ -75,6 +75,22 @@
   {% block detail %}
   {% endblock detail %}
 
+  {% if object.questions.all %}
+    <form class="" action="{% url 'core:ask_question' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="model" value="{{object.model}}">
+      <input type="hidden" name="object_id" value="{{object.pk}}">
+      <button type="submit" class="btn btn-lg btn-success">Случайный вопрос по данной теме</button>
+      <p class="my-2 text-muted">
+        {% for key, value in question_total_dict.items %}
+          {{key}}: {{value}},
+        {% empty %}
+          Всего вопросов по данной теме: {{object.questions.count}}
+        {% endfor %}
+      </p>
+    </form>
+  {% endif %}
+
   {% if object.is_validated and object.images.all %}
     {% include 'img/img_preview_set.html' with img_preview_set=object.img_preview_set %}
   {% endif %}

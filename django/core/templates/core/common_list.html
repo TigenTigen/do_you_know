@@ -1,6 +1,7 @@
 {% extends 'layout/wrapper.html' %}
 
 {% block content %}
+  <a href="{% url 'core:ask_random_question' %}" class="btn btn-lg btn-success mb-4 w-100">Случайный вопрос</a>
   <div class="mb-2">
     <nav class="nav bg-light d-flex flex-row align-items-center justify-content-arownd p-2">
       <label class="m-0">Всего: {{object_list.count}}</label>

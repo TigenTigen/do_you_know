@@ -1,0 +1,21 @@
+{% block question_rating %}
+  <form action="{% url 'core:rate' %}" method="post" class="bg-light d-flex flex-row align-items-center p-2">
+    {% csrf_token %}
+    <input type="hidden" name="model" value="Question">
+    <input type="hidden" name="object_id" value="{{question.id}}">
+    <label class="d-inline-block mx-2 my-2">Оцените данную страницу:</label>
+    {% for one in 'five!' %}
+    <button type="submit" name="value" value="{{forloop.counter}}"
+            class="btn bg-light d-inline-block align-items-center my-2 p-0">
+      <i class="material-icons m-0 p-0" style="font-size: 24px; color: green;">
+        {% if forloop.counter <= current_user_rating %}
+          star
+        {% else %}
+          star_border
+        {% endif %}
+      </i>
+    </button>
+    {% endfor %}
+    <label class="d-inline-block mx-2 my-2 text-dark">{{question.rating}}</label>
+  </form>
+{% endblock %}

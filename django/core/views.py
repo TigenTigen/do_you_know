@@ -266,6 +266,13 @@ def create_question(request):
     text = request.POST.get('question_text')
     if text and text != '':
         new_question = object.questions.create(text=text, user=request.user)
+        if isinstance(object, Theme):
+            new_question.theme = object
+            new_question.save()
+        elif isinstance(object, Book) or isinstance(object, Movie):
+            for theme in object.theme_set.all():
+                new_question.theme = theme
+            new_question.save()
         return redirect('core:add_answers', pk=new_question.pk)
     else:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -290,3 +297,77 @@ def add_answers(request, pk):
 class QuestionDetail(DetailView):
     model = Question
     template_name = 'questions/question_datail.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        user = self.request.user
+        object = self.object
+        reply = object.replies.filter(user=user)
+        if reply.exists():
+            context.update({'user_answer': reply.get().answer})
+        if user.is_authenticated:
+            user_is_creator = (user == object.user)
+            if user_is_creator:
+                context.update({'user_is_creator': True})
+            else:
+                user_rating = object.ratings.filter(user_rated=user)
+                if user_rating.exists():
+                    context.update({'current_user_rating': user_rating.get().value})
+        return context
+
+@login_required
+@require_POST
+def ask_question(request):
+    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+    object = get_object_or_404(model, pk=request.POST.get('object_id'))
+    question = object.get_question_to_ask(request.user)
+    return render(request, 'questions/ask.html', {'question': question})
+
+@login_required
+def ask_similar_question(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    object = question.content_object
+    question = object.get_question_to_ask(request.user)
+    return render(request, 'questions/ask.html', {'question': question})
+
+@login_required
+def ask_random_question(request):
+    question = Question.objects.get_random_question(request.user)
+    return render(request, 'questions/ask.html', {'question': question})
+
+@login_required
+@require_POST
+def check_answer(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    checked_answer = request.POST.get('checked_answer')
+    if checked_answer:
+        checked_answer = get_object_or_404(Answer, pk=checked_answer)
+    if checked_answer in question.answers.all():
+        reply = request.user.replies.create(
+            question = question,
+            answer = checked_answer,
+            outcome = checked_answer.is_right,
+        )
+        return redirect('core:reply_detail', pk=reply.id)
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+class UserReplyRecordDetailView(DetailView):
+    model = UserReplyRecord
+    template_name = 'questions/reply_detail.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        user = self.request.user
+        question = self.object.question
+        if user.is_authenticated:
+            user_rating = question.ratings.filter(user_rated=user)
+            if user_rating.exists():
+                context.update({'current_user_rating': user_rating.get().value})
+        return context
+
+@login_required
+def get_answer(request, pk):
+    reply = get_object_or_404(UserReplyRecord, pk=pk)
+    question = reply.question
+    return redirect('core:question_detail', pk=question.pk)
