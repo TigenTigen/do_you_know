@@ -2,6 +2,14 @@
 
 {% load crispy_forms_tags %}
 
+{% block sidebar %}
+  {% with themes=object.question.theme.all %}
+    {% if themes %}
+      {% include 'layout/connected_theme_block.html' %}
+    {% endif %}
+  {% endwith %}
+{% endblock %}
+
 {% block content %}
   <p>Вопрос:</p>
   <strong>{{object.question}}</strong>
@@ -9,12 +17,12 @@
   <hr>
   {% if object.outcome == True %}
     <p class="text-success">Поздравляем, Вы выбрали правильный ответ -  "{{object.answer.text}}"!</p>
+    <p class="text-success">Данный ответ оценивается в {{object.points|floatformat}} баллов, которые будут добавлены в Ваш личный счет.</p>
     <p>Пояснения автора: {{object.question.explanation|default_if_none:" - "}}</p>
     <p>Статистика ответов:</p>
-    <p>Всего ответов: {{object.question.replies.count}}</p>
     <div class="my-2">
       {% for answer in object.question.answers.all %}
-      <div class="">
+      <div class="my-2">
         <label class="{{answer.color}}">{{answer.text}}</label>
         <div class="progress">
           <div class="progress-bar bg-success" style="width: {{answer.frequence}}%;" aria-valuenow="{{answer.frequence}}" aria-valuemin="0" aria-valuemax="100">
@@ -24,6 +32,7 @@
       </div>
       {% endfor %}
     </div>
+    <p class="text-muted">Всего ответов: {{object.question.replies.count}}</p>
   {% elif object.outcome == False %}
     <p>К сожалению, Вы выбрали неправильный ответ.</p>
     <button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#exampleModal">

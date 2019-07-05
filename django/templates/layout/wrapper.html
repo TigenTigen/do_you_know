@@ -49,15 +49,8 @@
                 {% endblock %}
               </div>
               <div class="col-4">
-                {% if object and object.theme_set.all %}
-                  {% include 'layout/connected_theme_block.html' %}
-                {% endif %}
-                {% if object.is_validated %}
-                  {% include 'questions/question_form_block.html' %}
-                {% endif %}
-                {% if object.is_validated and image_form %}
-                  {% include 'img/image_upload_form.html' %}
-                {% endif %}
+                {% block sidebar %}
+                {% endblock %}
               </div>
             </div>
           </div>

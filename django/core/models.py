@@ -17,6 +17,11 @@ class QuestionManager(models.Manager):
             return None
         return questions.order_by('?').first()
 
+    def user_created(self, user):
+        qs = self.get_queryset()
+        qs = qs.filter(user=user)
+        return qs
+
 class Question(models.Model):
     content_type = models.ForeignKey(to=ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -39,6 +44,9 @@ class Question(models.Model):
 
     def __str__(self):
         return self.text
+
+    def get_absolute_url(self):
+        return '/core/questions/{}'.format(self.pk)
 
     def right_answer(self):
         right_answer = self.answers.filter(is_right=True)
@@ -78,12 +86,18 @@ class Answer(models.Model):
             return frequence
         return 0
 
+    def points(self):
+        if self.is_right:
+            return (100 - self.frequence())/10 + 1
+        return 0
+
 class UserReplyRecord(models.Model):
     user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='replies')
     question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name='replies')
     answer = models.ForeignKey(to=Answer, on_delete=models.CASCADE, related_name='replies', null=True, blank=True)
     timedate = models.DateTimeField('Дата ответа', auto_now_add=True)
     outcome = models.BooleanField('Результат проверки ответа', default=None, null=True, blank=True)
+    points = models.PositiveIntegerField('Очки, полученные пользователем за правильный ответ', default=0)
 
     class Meta:
         verbose_name = 'Ответ пользователя на вопрос'

@@ -4,7 +4,8 @@ from django.conf import settings
 from django.core.signing import Signer
 from django.template import engines, Context
 from django.urls import reverse
-from django.db.models import Count
+from django.db.models import Count, Sum, F, Avg
+
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 signer = Signer()
@@ -14,10 +15,16 @@ dt_engine = engines['django'].engine
 # Данная замена должна быть отражена в настройках проекта: AUTH_USER_MODEL = 'user.models.AdvUser'.
 # Замен производится с целью расширения стандартной модели с помощью дополнительных методов и атрибутов.
 class AdvUserManager(models.Manager):
-    pass
+    def get_points_rating_queryset(self):
+        qs = self.get_queryset()
+        qs = qs.filter(is_active=True)
+        qs = qs.annotate(points_count=Sum('replies__points'))
+        qs = qs.exclude(points_count=None)
+        qs = qs.order_by('-points_count')
+        return qs
 
 class AdvUser(AbstractUser):
-    #objects = AdvUserManager()
+    objects = AdvUserManager()
 
     class Meta(AbstractUser.Meta):
         verbose_name = 'Пользователь'
@@ -58,3 +65,8 @@ class AdvUser(AbstractUser):
 
     def social_count(self):
         return self.social_auth.count()
+
+    # questions
+    def total_points_count(self):
+        total_points_count = self.replies.aggregate(sum=models.Sum('points'))
+        return total_points_count['sum']

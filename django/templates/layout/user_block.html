@@ -1,7 +1,4 @@
 {% block user_block %}
-  {% load cache %}
-
-  {% cache 300 user_block mykey request.user.id %}
     <div class="container p-4 text-white">
       <div class="row">
         <div class="col">
@@ -11,12 +8,13 @@
             Понравившиеся
             <a href="{% url 'core:favorite_by_user' %}" class="text-white">темы</a>
           </p>
-          <a href="{% url 'core:created_by_user' %}" class="text-white">mine</a>
+          <a href="{% url 'core:created_by_user' %}" class="text-white">mine pages</a>
+          <a href="{% url 'core:created_by_user_questions' %}" class="text-white">mine questions</a>
+          <p>total_points_count = {{user.total_points_count}}</p>
         </div>
         <div class="col">
 
         </div>
       </div>
     </div>
-  {% endcache %}
 {% endblock %}

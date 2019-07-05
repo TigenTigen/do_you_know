@@ -5,7 +5,7 @@
     </div>
     <div class="card-body">
       <ul>
-        {% for theme in object.theme_set.all %}
+        {% for theme in themes %}
           <li>
             <a href="{{theme.get_absolute_url}}" class="text-white">
               {{theme}}

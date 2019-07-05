@@ -5,6 +5,7 @@ from django.apps import apps
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import inlineformset_factory
+from django.contrib.auth import get_user_model
 
 from core.models import *
 from core.forms import *
@@ -347,6 +348,7 @@ def check_answer(request, pk):
             question = question,
             answer = checked_answer,
             outcome = checked_answer.is_right,
+            points = checked_answer.points(),
         )
         return redirect('core:reply_detail', pk=reply.id)
     else:
@@ -371,3 +373,38 @@ def get_answer(request, pk):
     reply = get_object_or_404(UserReplyRecord, pk=pk)
     question = reply.question
     return redirect('core:question_detail', pk=question.pk)
+
+class UserCreatedQuestionsListView(ListView):
+    template_name = 'questions/created_by_user.html'
+
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user
+        qs = Question.objects.user_created(user)
+        return qs
+
+# user ratings
+class UserListView(ListView):
+    template_name = 'ratings/users.html'
+    paginate_by = 10
+
+    def get_queryset(self, *args, **kwargs):
+        user_model = get_user_model()
+        qs = user_model.objects.get_points_rating_queryset()
+        return qs
+
+    def get_paginate_by(self, *args, **kwargs):
+        paginate_by = self.request.GET.get('paginate_by')
+        if not paginate_by:
+            return self.paginate_by
+        return int(paginate_by)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        paginate_by = self.get_paginate_by()
+        page_suffix = '&paginate_by={}'.format(paginate_by)
+        context.update({
+            'paginate_by': paginate_by,
+            'pagination_list': [10, 20, 30],
+            'page_suffix': page_suffix,
+        })
+        return context

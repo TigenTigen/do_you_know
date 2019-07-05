@@ -37,10 +37,13 @@ urlpatterns = [
     path('questions/create/', create_question, name='question_create'),
     path('questions/ask/', ask_question, name='ask_question'),
     path('questions/ask/random/', ask_random_question, name='ask_random_question'),
+    path('questions/created_by_user/', UserCreatedQuestionsListView.as_view(), name='created_by_user_questions'),
     path('questions/<int:pk>/ask/', ask_similar_question, name='ask_similar_question'),
     path('questions/<int:pk>/', QuestionDetail.as_view(), name='question_detail'),
     path('questions/<int:pk>/check_answer/', check_answer, name='check_answer'),
     path('questions/<int:pk>/answers/add/', add_answers, name='add_answers'),
     path('questions/reply/<int:pk>/', UserReplyRecordDetailView.as_view(), name='reply_detail'),
     path('questions/reply/<int:pk>/get_answer', get_answer, name='get_answer'),
+        #user_rating
+    path('ratings/users/', UserListView.as_view(), name='ratings_users'),
 ]

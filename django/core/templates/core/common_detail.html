@@ -4,6 +4,18 @@
   {{object.title}}
 {% endblock %}
 
+{% block sidebar %}
+  {% with themes=object.theme_set.all %}
+    {% if themes %}
+      {% include 'layout/connected_theme_block.html' %}
+    {% endif %}
+  {% endwith %}
+  {% if object.is_validated %}
+    {% include 'questions/question_form_block.html' %}
+    {% include 'img/image_upload_form.html' %}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
   {% if not object.is_validated %}
     <div class="alert alert-danger">
