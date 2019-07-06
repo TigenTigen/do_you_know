@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -14,6 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('selectable/', include('selectable.urls')),
     path('img/', include('img.urls', namespace='img')),
+    path('contacts/', include('contacts.urls', namespace='contacts'))
 ]
 
 if settings.DEBUG:

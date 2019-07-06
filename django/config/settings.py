@@ -203,3 +203,6 @@ THUMBNAIL_ALIASES = {
         },
     },
 }
+
+# contacts settings
+INSTALLED_APPS += ['contacts.apps.ContactsConfig', ]

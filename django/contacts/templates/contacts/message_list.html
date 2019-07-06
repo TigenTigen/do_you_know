@@ -1,0 +1,37 @@
+{% extends 'layout/wrapper.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+  Список сообщений
+{% endblock %}
+
+{% block content %}
+  <a href="{% url 'contacts:faq' %}" class="btn btn-success">Часто задаваемые вопросы</a>
+  <a href="{% url 'contacts:message_create' %}" class="btn btn-success">Оставить сообщение для команды сайта</a>
+  <div class="list-group">
+    {% for object in object_list %}
+      <div class="card text-left my-2 p-2">
+        <strong>{{object.title}} ({{object.category}})</strong>
+        <p>{{object.text}}</p>
+        <footer class="text-muted">
+          {{object.reg_user.user.username|default_if_none:"Гость"|default:"Гость"}}, {{object.created}}
+        </footer>
+        {% for reply in object.replies.all %}
+          <div class="card text-left my-2 ml-5 p-2">
+            <p>{{reply.text}}</p>
+            <footer class="text-muted">
+              Комманда сайта "Do you know?", {{reply.created}}
+            </footer>
+          </div>
+        {% endfor %}
+        {% if user.is_staff %}
+          <a href="{% url 'contacts:add_to_faq' pk=object.pk %}" class="btn btn-success">Добавить в  FAQ</a>
+          <a href="{% url 'contacts:message_reply' pk=object.pk %}" class="btn btn-success">Ответить на сообщение</a>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p>Данные отсутствуют</p>
+    {% endfor %}
+  </div>
+{% endblock %}

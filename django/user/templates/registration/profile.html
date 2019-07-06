@@ -10,4 +10,6 @@
   <p class="m-0">Дата регистрации: {{user.date_joined|default_if_none:" - "|default:" - "}}</p>
   <p class="m-0">Дата последнего входа: {{user.last_login|default_if_none:" - "|default:" - "}}</p>
   <a href="{% url 'user:password_change' %}" class="btn btn-success my-2">Сменить пароль</a>
+
+  {% include 'contacts/user_messages_block.html' %}
 {% endblock %}

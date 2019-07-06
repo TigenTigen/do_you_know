@@ -1,0 +1,25 @@
+{% block user_message_block %}
+  {% if user.messages.all %}
+    <hr>
+    <strong class="my-2">Сообщения обратной связи, оставленные Вами:</strong>
+    <div class="list-group">
+      {% for object in user.messages.all %}
+        <div class="card text-left my-2 p-2">
+          <strong>{{object.title}} ({{object.category}})</strong>
+          <p>{{object.text}}</p>
+          <footer class="text-muted">
+            {{object.created}}
+          </footer>
+          {% for reply in object.replies.all %}
+            <div class="card text-left my-2 ml-5 p-2">
+              <p>{{reply.text}}</p>
+              <footer class="text-muted">
+                Комманда сайта "Do you know?", {{reply.created}}
+              </footer>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

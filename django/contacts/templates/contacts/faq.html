@@ -1,0 +1,25 @@
+{% extends 'layout/wrapper.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+  FAQ
+{% endblock %}
+
+{% block content %}
+  <div class="list-group">
+    {% for object in object_list %}
+      <div class="card text-left my-2 p-2">
+        <p class="m-0"><strong>Вопрос:</strong> {{object.text}}</p>
+        <p class="m-0">
+          <strong>Ответ:</strong>
+          {% for reply in object.replies.all %}
+            {{reply.text}}
+          {% endfor %}
+        </p>
+      </div>
+    {% empty %}
+      <p>Данные отсутствуют</p>
+    {% endfor %}
+  </div>
+{% endblock %}
