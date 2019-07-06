@@ -17,6 +17,11 @@ class QuestionManager(models.Manager):
             return None
         return questions.order_by('?').first()
 
+    def get_wellcome_question(self):
+        qs = self.get_queryset()
+        qs = self.order_by('-rating')
+        return qs.first()
+
     def user_created(self, user):
         qs = self.get_queryset()
         qs = qs.filter(user=user)

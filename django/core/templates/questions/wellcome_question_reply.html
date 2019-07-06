@@ -1,0 +1,67 @@
+{% extends 'layout/wrapper.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block sidebar %}
+  {% with themes=object.question.theme.all %}
+    {% if themes %}
+      {% include 'layout/connected_theme_block.html' %}
+    {% endif %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+  <p>Вопрос:</p>
+  <strong>{{question}}</strong>
+  {% include 'questions/question_rating_block.html' %}
+  <hr>
+  {% if answer.is_right %}
+    <p class="text-success">Поздравляем, Вы выбрали правильный ответ -  "{{answer.text}}"!</p>
+    <p>Пояснения автора: {{object.question.explanation|default_if_none:" - "}}</p>
+    <p>Статистика ответов:</p>
+    <div class="my-2">
+      {% for answer in question.answers.all %}
+      <div class="my-2">
+        <label class="{{answer.color}}">{{answer.text}}</label>
+        <div class="progress">
+          <div class="progress-bar bg-success" style="width: {{answer.frequence}}%;" aria-valuenow="{{answer.frequence}}" aria-valuemin="0" aria-valuemax="100">
+            {{answer.frequence|floatformat}} %
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="text-muted">Всего ответов: {{question.replies.count}}</p>
+  {% elif object.outcome == False %}
+    <p>К сожалению, Вы выбрали неправильный ответ.</p>
+    <button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#exampleModal">
+      Узнать правильный ответ
+    </button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Предупреждение!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Перейдя на следующую страницу вы никогда больше не получите возможность
+            ответить на данный вопрос повторно.
+          </div>
+          <div class="modal-footer">
+            <a type="button" class="btn btn-success" href="{% url 'core:get_answer' pk=object.pk %}">
+              Хочу знать ответ!
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p>Ответ не поступил.</p>
+  {% endif %}
+  <a href="{% url 'core:ask_random_question' %}" class="btn btn-success my-2">
+    Случайный вопрос
+  </a>
+{% endblock %}

@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, RedirectView
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.apps import apps
@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import inlineformset_factory
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 from core.models import *
 from core.forms import *
@@ -336,7 +337,10 @@ def ask_random_question(request):
     question = Question.objects.get_random_question(request.user)
     return render(request, 'questions/ask.html', {'question': question})
 
-@login_required
+def ask_wellcome_question(request):
+    question = Question.objects.get_wellcome_question()
+    return render(request, 'questions/ask.html', {'question': question})
+
 @require_POST
 def check_answer(request, pk):
     question = get_object_or_404(Question, pk=pk)
@@ -344,13 +348,18 @@ def check_answer(request, pk):
     if checked_answer:
         checked_answer = get_object_or_404(Answer, pk=checked_answer)
     if checked_answer in question.answers.all():
-        reply = request.user.replies.create(
-            question = question,
-            answer = checked_answer,
-            outcome = checked_answer.is_right,
-            points = checked_answer.points(),
-        )
-        return redirect('core:reply_detail', pk=reply.id)
+        user = request.user
+        if user.is_authenticated:
+            reply = user.replies.create(
+                question = question,
+                answer = checked_answer,
+                outcome = checked_answer.is_right,
+                points = checked_answer.points(),
+            )
+            return redirect('core:reply_detail', pk=reply.id)
+        else:
+            context = {'question': question, 'answer': checked_answer}
+            return render(request, 'questions/wellcome_question_reply.html', context)
     else:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -408,3 +417,11 @@ class UserListView(ListView):
             'page_suffix': page_suffix,
         })
         return context
+
+class MainPageRedirectView(RedirectView):
+    def get_redirect_url(self):
+        user = self.request.user
+        if user.is_authenticated:
+            return reverse('user:profile')
+        else:
+            return reverse('core:ask_wellcome_question')

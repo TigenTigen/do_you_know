@@ -36,6 +36,7 @@ urlpatterns = [
         #questions
     path('questions/create/', create_question, name='question_create'),
     path('questions/ask/', ask_question, name='ask_question'),
+    path('questions/ask/wellcome/', ask_wellcome_question, name='ask_wellcome_question'),
     path('questions/ask/random/', ask_random_question, name='ask_random_question'),
     path('questions/created_by_user/', UserCreatedQuestionsListView.as_view(), name='created_by_user_questions'),
     path('questions/<int:pk>/ask/', ask_similar_question, name='ask_similar_question'),

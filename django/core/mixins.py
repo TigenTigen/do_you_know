@@ -1,5 +1,6 @@
 from django.views.generic.list import MultipleObjectMixin
 from django.views.generic.detail import SingleObjectMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from core.models import Theme
 from img.forms import ImageForm
@@ -107,7 +108,7 @@ class OrderingMultipleObjectMixin(MultipleObjectMixin):
         })
         return context
 
-class ValidationMultipleObjectMixin(MultipleObjectMixin):
+class ValidationMultipleObjectMixin(MultipleObjectMixin, LoginRequiredMixin):
     template_name='core/validation_list.html'
 
     def get_queryset(self, *args, **kwargs):
