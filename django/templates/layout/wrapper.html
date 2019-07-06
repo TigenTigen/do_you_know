@@ -36,10 +36,6 @@
       <div class="px-2">
         <div class="container shadow p-0">
           <div class="bg-success">
-            {% if user.is_authenticated %}
-              {% include 'layout/user_block.html' %}
-              <hr>
-            {% endif %}
             {% include 'layout/horisontal_menu.html' %}
           </div>
           <div class="p-5 bg-white" style="min-height: 550px;">
@@ -49,6 +45,9 @@
                 {% endblock %}
               </div>
               <div class="col-4">
+                {% if user.is_authenticated %}
+                  {% include 'layout/user_menu.html' %}
+                {% endif %}
                 {% block sidebar %}
                 {% endblock %}
               </div>

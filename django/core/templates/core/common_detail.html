@@ -5,11 +5,6 @@
 {% endblock %}
 
 {% block sidebar %}
-  {% with themes=object.theme_set.all %}
-    {% if themes %}
-      {% include 'layout/connected_theme_block.html' %}
-    {% endif %}
-  {% endwith %}
   {% if object.is_validated %}
     {% include 'questions/question_form_block.html' %}
     {% include 'img/image_upload_form.html' %}
@@ -77,6 +72,16 @@
       {% for number in object.number_set.all %}
         <p class="h-5 m-0"><a href="{{number.get_absolute_url}}" class="text-muted">{{number}}</a></p>
       {% endfor %}
+      {% if object.theme_set.all %}
+        <p class="mt-2">
+          Связанные темы:
+          {% for theme in object.theme_set.all %}
+            <a href="{{theme.get_absolute_url}}" class="text-dark">{{theme}}</a>, 
+          {% empty %}
+            -
+          {% endfor %}
+        </p>
+      {% endif %}
       {% for key, value in object.extras.items %}
         <p class="m-0">{{key}}: {{value|default_if_none:"-"}}</p>
       {% endfor %}

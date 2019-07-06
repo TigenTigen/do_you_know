@@ -5,6 +5,7 @@ from django.core.signing import Signer
 from django.template import engines, Context
 from django.urls import reverse
 from django.db.models import Count, Sum, F, Avg
+from django.contrib.auth.models import UserManager
 
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
@@ -14,7 +15,7 @@ dt_engine = engines['django'].engine
 # Данная sмодель заменит модель пользователя User, используемую по умолчанию.
 # Данная замена должна быть отражена в настройках проекта: AUTH_USER_MODEL = 'user.models.AdvUser'.
 # Замен производится с целью расширения стандартной модели с помощью дополнительных методов и атрибутов.
-class AdvUserManager(models.Manager):
+class AdvUserManager(UserManager):
     def get_points_rating_queryset(self):
         qs = self.get_queryset()
         qs = qs.filter(is_active=True)

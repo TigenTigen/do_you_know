@@ -15,6 +15,9 @@
 
   <h3>{{object.text}}</h3>
   <p class="m-0">Вопрос относится к <a href="{{object.content_object.get_absolute_url}}">{{object.content_object}}</a></p>
+  {% if object.theme and object.content_object != object.theme %}
+    <p class="m-0">Связанная тема: <a href="{{object.theme.get_absolute_url}}">{{object.theme}}</a></p>
+  {% endif %}
   <p class="m-0">Добавил: {{object.user.username}}, {{object.created}}</p>
 
   <p>Статистика ответов:</p>

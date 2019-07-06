@@ -2,7 +2,7 @@
 
 {% block content %}
   <a href="{% url 'core:ask_random_question' %}" class="btn btn-lg btn-success mb-4 w-100">Случайный вопрос</a>
-  <div class="mb-2">
+  <div class="mb-2 w-100">
     <nav class="nav bg-light d-flex flex-row align-items-center justify-content-arownd p-2">
       <label class="m-0">Всего: {{object_list.count}}</label>
       <div id="paginate_by" class="ml-auto">
@@ -63,7 +63,7 @@
   {% include card_path %}
 
   {% if page_obj.has_other_pages %}
-    <div class="mt-auto">
+    <div class="mt-auto w-100">
       <hr>
       <nav class="nav bg-light">
         <a class="nav-link" href="?page=1{{page_suffix}}">Начало</a>

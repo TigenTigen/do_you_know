@@ -3,6 +3,18 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+  {% if not user.is_authenticated %}
+  <div class="alert alert-success">
+    <p class="mb-0">
+      Вы не являетесь зарегистрированным пользователем данного сайта.
+      Все ответы, которые будут вами даны не будут оценены.
+      Чтобы получить доступ к дополнительным возможностям сайта,
+      пройдите регистрацию или войдите с помощью аккаунта социальной сети.
+    </p>
+    <footer class="blockquote-footer">Do you know?</footer>
+  </div>
+  {% endif %}
+
   {% if not question %}
     <p>Данные отсутсвуют</p>
   {% else %}

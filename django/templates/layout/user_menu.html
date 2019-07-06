@@ -1,0 +1,15 @@
+{% block user_menu %}
+  <div class="card text-white bg-success mb-3">
+    <div class="card-header">
+      <p class="m-0">Добро пожаловать, {{user.username}}</p>
+      <p class="m-0">Текущая сумма баллов: {{user.total_points_count}}</p>
+    </div>
+    <div class="list-group list-group-flush bg-transparent">
+      <a href="{% url 'user:profile' %}" class="list-group-item list-group-item-action text-white bg-success" >Мой профиль</a>
+      <a href="{% url 'core:favorite_by_user' %}" class="list-group-item list-group-item-action text-white bg-success">Избранные темы</a>
+      <a href="{% url 'core:created_by_user' %}" class="list-group-item list-group-item-action text-white bg-success">Созданные страницы</a>
+      <a href="{% url 'core:created_by_user_questions' %}" class="list-group-item list-group-item-action text-white bg-success">Созданные вопросы</a>
+      <a href="{% url 'core:ask_random_question' %}" class="list-group-item list-group-item-action text-white bg-success">Случайный вопрос</a>
+    </div>
+  </div>
+{% endblock%}
