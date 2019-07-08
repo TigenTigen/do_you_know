@@ -26,6 +26,10 @@ class Image(models.Model):
         ordering = ['content_type', 'object_id', '-uploaded',]
 
     def __str__(self):
+        try:
+            self.image.file
+        except:
+            self.delete()
         if self.content_object:
             return '{}, {} ({})'.format(self.pk, self.content_object, self.content_type)
         else:

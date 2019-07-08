@@ -3,9 +3,9 @@
 {% block cover_lg %}
   <div class="d-flex flex-row justify-content-center">
     {% if cover.image %}
-      <img src="{% thumbnail cover.image 'cover_lg' %}" alt="{{object}}" class="card-img-top" height="270">
+      <img src="{% thumbnail cover.image 'cover_lg' %}" alt="{{object}}" class="card-img-top" height="250">
     {% else %}
-      <img src="https://via.placeholder.com/200x270" alt="{{object}}" class="card-img-top">
+      <img src="https://via.placeholder.com/200x250" alt="{{object}}" class="card-img-top" height="250">
     {% endif %}
   </div>
 {% endblock %}

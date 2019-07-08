@@ -456,6 +456,7 @@ class ThemeManager(models.Manager):
         qs = qs.prefetch_related('creators', 'cycles', 'books', 'movies')
         return qs
 
+class ValidationThemeManager(ValidatableModelManager):
     def favorite_by(self, user):
         qs = self.get_queryset()
         qs = qs.filter(favorited_by=user).distinct()
@@ -471,6 +472,7 @@ class Theme(ValidatableModel):
     favorited_by = models.ManyToManyField(AUTH_USER_MODEL, related_name='favorite_themes')
 
     objects = ThemeManager()
+    validation = ValidationThemeManager()
 
     class Meta:
         verbose_name = 'Тема'

@@ -23,13 +23,13 @@
     <p>Варианты ответов:</p>
     <form action="{% url 'core:check_answer' pk=question.pk %}" method="post">
       {% csrf_token %}
-      <div class="btn-group-vertical">
-        {% for answer in question.answers.all %}
-          <button type="submit" class="btn btn-success" name="checked_answer" value={{answer.id}}>
-            {{answer}}
-          </button>
-        {% endfor %}
-      </div>
+      {% for answer in question.answers.all %}
+        <div class="custom-control custom-radio">
+          <input type="radio" class="custom-control-input" name="checked_answer" value={{answer.id}} id="customRadio-{{answer.id}}">
+          <label class="custom-control-label" for="customRadio-{{answer.id}}">{{answer}}</label>
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-success">Отправить ответ</button>
     </form>
   {% endif %}
 {% endblock %}

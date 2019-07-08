@@ -1,20 +1,22 @@
 {% block card %}
-  <div class="card-deck">
+  <div class="card-deck d-flex justify-content-left p-2">
     {% for object in object_list %}
-      <div class="card text-center text-success list-group-item list-group-item-action p-0 shadow-sm">
+      <div class="card text-center text-success list-group-item list-group-item-action p-0 shadow-sm my-2" style="max-width: 200px; min-width: 150px;">
         <a href="{{object.get_absolute_url}}" >
           {% include 'img/cover_lg.html' with cover=object.cover_img %}
         </a>
-        <div class="card-body p-2">
-          <a href="{{object.get_absolute_url}}">
+        <div class="card-body p-2 d-flex flex-row justify-content-around align-items-center">
+          <a href="{{object.get_absolute_url}}" class="text-dark">
             <p class="card-text m-0">{{object}}</p>
           </a>
+        </div>
+        <div class="card-footer bg-transparent">
           <div class="d-flex flex-row justify-content-around align-items-center">
             <div class="d-flex flex-row justify-content-around align-items-center">
               <i class="material-icons m-0 p-0" style="font-size: 24px; color: green;">
                 star_border
               </i>
-              <label class="d-inline-block mx-2 my-2 text-dark">{{object.rating}}</label>
+              <span class="d-inline-block mx-2 my-2 p-0 text-dark">{{object.rating}}</span>
             </div>
             {% if object.model == 'Theme' %}
               <div class="d-flex flex-row align-items-center">
@@ -27,7 +29,7 @@
                     {% endif %}
                   </i>
                 </a>
-                <span class="d-inline-block mx-2 my-0 p-0 text-dark">{{object.favorite_count}}</span>
+                <span class="d-inline-block mx-2 my-2 p-0 text-dark">{{object.favorite_count}}</span>
               </div>
             {% endif %}
           </div>

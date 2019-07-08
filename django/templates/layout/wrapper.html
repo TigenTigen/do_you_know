@@ -40,17 +40,19 @@
           </div>
           <div class="p-5 bg-white" style="min-height: 550px;">
             <div class="row">
-              <div class="col">
-                {% block content %}
-                {% endblock %}
-              </div>
-              <div class="col-4">
-                {% if user.is_authenticated %}
-                  {% include 'layout/user_menu.html' %}
-                {% endif %}
-                {% block sidebar %}
-                {% endblock %}
-              </div>
+              {% block extra_content %}
+                <div class="col">
+                  {% block content %}
+                  {% endblock %}
+                </div>
+                <div class="col-4">
+                  {% if user.is_authenticated %}
+                    {% include 'layout/user_menu.html' %}
+                  {% endif %}
+                  {% block sidebar %}
+                  {% endblock %}
+                </div>
+              {% endblock extra_content %}
             </div>
           </div>
         </div>

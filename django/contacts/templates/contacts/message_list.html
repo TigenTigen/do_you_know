@@ -26,8 +26,10 @@
           </div>
         {% endfor %}
         {% if user.is_staff %}
-          <a href="{% url 'contacts:add_to_faq' pk=object.pk %}" class="btn btn-success">Добавить в  FAQ</a>
-          <a href="{% url 'contacts:message_reply' pk=object.pk %}" class="btn btn-success">Ответить на сообщение</a>
+          <div class="d-flex flex-row justify-content-center my-2">
+            <a href="{% url 'contacts:add_to_faq' pk=object.pk %}" class="btn btn-success mx-2">Добавить в  FAQ</a>
+            <a href="{% url 'contacts:message_reply' pk=object.pk %}" class="btn btn-success mx-2">Ответить на сообщение</a>
+          </div>
         {% endif %}
       </div>
     {% empty %}

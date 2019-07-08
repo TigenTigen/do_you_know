@@ -11,9 +11,9 @@
 {% endblock %}
 
 {% block content %}
-  <p>Вопрос:</p>
-  <strong>{{object.question}}</strong>
   {% include 'questions/question_rating_block.html' with question=object.question %}
+  <p class="mt-2">Вопрос:</p>
+  <strong>{{object.question}}</strong>
   <hr>
   {% if object.outcome == True %}
     <p class="text-success">Поздравляем, Вы выбрали правильный ответ -  "{{object.answer.text}}"!</p>

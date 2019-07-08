@@ -223,6 +223,26 @@ def created_by_user(request):
     return render(request, 'core/created_by_user.html', {'created_by_user_dict': created_by_user_dict})
 
 # favorite_themes
+class FavouriteThemeList(ThemeList):
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user
+        model = self.model
+        qs = model.validation.favorite_by(user)
+        order = self.get_order()
+        ordering_dict = {
+            "alphabet_incr": qs.order_by('title'),
+            "alphabet_decr": qs.order_by('-title'),
+            "year_incr": qs.order_by('year'),
+            "yaer_decr": qs.order_by('-year'),
+            "rate_incr": qs.order_by('rating'),
+            "rate_decr": qs.order_by('-rating'),
+            "validated_incr": qs.order_by('validated'),
+            "validated_decr": qs.order_by('-validated'),
+        }
+        qs = ordering_dict[order]
+        return qs
+
+        '''
 class FavouriteThemeList(ListView):
     model = Theme
     template_name='core/theme_favorite_list.html'
@@ -230,6 +250,7 @@ class FavouriteThemeList(ListView):
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
         return Theme.objects.favorite_by(user)
+'''
 
 @login_required()
 def favorite(request, pk):
@@ -306,7 +327,7 @@ class QuestionDetail(DetailView):
         object = self.object
         reply = object.replies.filter(user=user)
         if reply.exists():
-            context.update({'user_answer': reply.get().answer})
+            context.update({'user_answer': reply.first().answer})
         if user.is_authenticated:
             user_is_creator = (user == object.user)
             if user_is_creator:
@@ -422,6 +443,6 @@ class MainPageRedirectView(RedirectView):
     def get_redirect_url(self):
         user = self.request.user
         if user.is_authenticated:
-            return reverse('user:profile')
+            return reverse('core:theme_list')
         else:
             return reverse('core:ask_wellcome_question')

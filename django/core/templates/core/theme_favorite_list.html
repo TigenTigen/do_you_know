@@ -1,37 +1,39 @@
 {% extends 'layout/wrapper.html' %}
 
 {% block content %}
-  <div class="card-deck">
+  <div class="row">
     {% for object in object_list %}
-      <div class="card text-center text-success list-group-item list-group-item-action p-0 shadow-sm">
-        <a href="{{object.get_absolute_url}}" >
-          {% include 'img/cover_lg.html' with cover=object.cover_img %}
-        </a>
-        <div class="card-body p-2">
-          <a href="{{object.get_absolute_url}}">
-            <p class="card-text m-0">{{object}}</p>
+      <div class="col-sm-4">
+        <div class="card text-center text-success list-group-item list-group-item-action p-0 shadow-sm">
+          <a href="{{object.get_absolute_url}}" >
+            {% include 'img/cover_lg.html' with cover=object.cover_img %}
           </a>
-          <div class="d-flex flex-row justify-content-around align-items-center">
+          <div class="card-body p-2">
+            <a href="{{object.get_absolute_url}}">
+              <p class="card-text m-0">{{object}}</p>
+            </a>
             <div class="d-flex flex-row justify-content-around align-items-center">
-              <i class="material-icons m-0 p-0" style="font-size: 24px; color: green;">
-                star_border
-              </i>
-              <label class="d-inline-block mx-2 my-2 text-dark">{{object.rating}}</label>
-            </div>
-            {% if object.model == 'Theme' %}
-              <div class="d-flex flex-row align-items-center">
-                <a type="button" class="btn m-0 p-0" href="{% url 'core:favorite' pk=object.id %}">
-                  <i class="material-icons m-0 p-0" style="font-size: 24px; color: red;">
-                    {% if object in user.favorite_themes.all %}
-                      favorite
-                    {% else %}
-                      favorite_border
-                    {% endif %}
-                  </i>
-                </a>
-                <span class="d-inline-block mx-2 my-0 p-0 text-dark">{{object.favorite_count}}</span>
+              <div class="d-flex flex-row justify-content-around align-items-center">
+                <i class="material-icons m-0 p-0" style="font-size: 24px; color: green;">
+                  star_border
+                </i>
+                <label class="d-inline-block mx-2 my-2 text-dark">{{object.rating}}</label>
               </div>
-            {% endif %}
+              {% if object.model == 'Theme' %}
+                <div class="d-flex flex-row align-items-center">
+                  <a type="button" class="btn m-0 p-0" href="{% url 'core:favorite' pk=object.id %}">
+                    <i class="material-icons m-0 p-0" style="font-size: 24px; color: red;">
+                      {% if object in user.favorite_themes.all %}
+                        favorite
+                      {% else %}
+                        favorite_border
+                      {% endif %}
+                    </i>
+                  </a>
+                  <span class="d-inline-block mx-2 my-0 p-0 text-dark">{{object.favorite_count}}</span>
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
