@@ -9,9 +9,9 @@
           <img src="{% thumbnail img.image 'default' %}" class="m-2">
         </a>
       {% empty %}
-        no images
+        Изображения отсутсвуют
       {% endfor %}
     </div>
-    <p class="my-2">Всего: {{object.images.count}}   ...  <a href="{% url 'img:list_image' img_id=object.img_preview_set.first.id %}">Просмотреть все</a></p>
+    <p class="my-2">Всего: {{object.images.count}}   ...  <a href="{% url 'img:list_image' img_id=img_preview_set.first.id %}">Просмотреть все</a></p>
   </div>
 {% endblock %}

@@ -14,6 +14,7 @@
             'default': {
                 'size': (100, 100),
                 'crop': 'scale',
+                'autocrop': True,
             },
         },
     }
@@ -27,7 +28,6 @@
 
 4. Добавить поля связи с моделями Изображений к необходимым моделям основного приложения:
     # from django.contrib.contenttypes.fields import GenericRelation
-    cover_img = models.ForeignKey(to=CoverThumbnail, on_delete=models.PROTECT, null=True, blank=True)
     images = GenericRelation(Image, related_name='object')
 
 5. Добавить стандартные шаблоны изображений в основные шаблоны:

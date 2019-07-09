@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class ImgConfig(AppConfig):
     name = 'img'
-    verbose_name = 'Модуль по работе с изображениями'
+    verbose_name = '3. Модуль по работе с изображениями'

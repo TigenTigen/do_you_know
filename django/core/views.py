@@ -242,16 +242,6 @@ class FavouriteThemeList(ThemeList):
         qs = ordering_dict[order]
         return qs
 
-        '''
-class FavouriteThemeList(ListView):
-    model = Theme
-    template_name='core/theme_favorite_list.html'
-
-    def get_queryset(self, *args, **kwargs):
-        user = self.request.user
-        return Theme.objects.favorite_by(user)
-'''
-
 @login_required()
 def favorite(request, pk):
     user = request.user

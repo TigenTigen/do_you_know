@@ -1,16 +1,11 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import ListView
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.apps import apps
-from django.views.generic import ListView, DetailView, CreateView
 
-
-import requests
-
-from img.forms import *
-from img.models import *
+from img.forms import ImageForm
+from img.models import Image
 
 @require_POST
 @login_required
