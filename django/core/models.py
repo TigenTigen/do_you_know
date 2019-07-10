@@ -31,8 +31,8 @@ class Question(models.Model):
     content_type = models.ForeignKey(to=ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
-    theme = models.ForeignKey(to='Theme', on_delete=models.CASCADE, related_name='theme_questions', null=True, blank=True)
-    user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='questions')
+    theme = models.ForeignKey(to='Theme', on_delete=models.CASCADE, related_name='theme_questions', null=True, blank=True, verbose_name='Тема')
+    user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='questions', verbose_name='Автор вопроса')
     created = models.DateTimeField('Дата создания пользователем', auto_now_add=True)
     text = models.TextField('Текст вопроса')
     explanation = models.TextField('ОбЪяснения ответа', null=True, blank=True)
@@ -44,7 +44,7 @@ class Question(models.Model):
 
     class Meta:
         verbose_name = 'Вопрос'
-        verbose_name_plural = 'Вопросы'
+        verbose_name_plural = '6. Вопросы'
         ordering = ['-created']
 
     def __str__(self):
@@ -117,6 +117,8 @@ class Rating(models.Model):
     content_object = GenericForeignKey()
 
     class Meta:
+        verbose_name = 'Оценка пользователя'
+        verbose_name_plural = 'Оценки пользователей страниц сайта'
         unique_together = ['user_rated', 'content_type', 'object_id']
 
     def __str__(self):
@@ -147,7 +149,7 @@ class ValidatableModel(models.Model):
     approve_score = models.SmallIntegerField('Счетчик одобрения', default=0)
     is_validated_by_staff = models.BooleanField('Одобрен командой сайта', default=False)
     is_validated_by_users = models.BooleanField('Одобрен пользовательским голосованием', default=False)
-    proposed = models.DateTimeField('Дата вынесения на обсуждение', auto_now_add=True, null=True, blank=True)
+    proposed = models.DateTimeField('Дата вынесения на одобрение', auto_now_add=True, null=True, blank=True)
     validated = models.DateTimeField('Дата одобрения', null=True, blank=True)
     created_by_user_id = models.SmallIntegerField('Пользователь, создавший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
     validated_by_staff_id = models.SmallIntegerField('Член команды сайта, одобривший данный объект', null=True, blank=True) # на ForeignKey джанго ругается
@@ -175,9 +177,11 @@ class ValidatableModel(models.Model):
 
     def user(self):
         return AUTH_USER_MODEL.objects.get(id=self.created_by_user_id)
+    user.short_description = 'Пользователь, создавший данную страницу'
 
     def staff(self):
         return AUTH_USER_MODEL.objects.get(id=self.validated_by_staff_id)
+    staff.short_description = 'Член команды сайта, утвердивший данную страницу'
 
     def target(self):
         return 5
@@ -207,6 +211,7 @@ class ValidatableModel(models.Model):
         elif self.is_validated_by_users:
             return 'одобрено по итогам голосования пользователей'
         return 'текущий уровень одобрения: {}'.format(self.approve_score)
+    validation_status.short_description = 'Валидация'
 
     def refresh_ratig(self):
         aggregation_dict = self.ratings.aggregate(rating=Avg('value'))
@@ -254,7 +259,7 @@ class Person(ValidatableModel):
 
     class Meta:
         verbose_name = 'Человек'
-        verbose_name_plural = 'Люди'
+        verbose_name_plural = '4. Люди'
         ordering = ['name']
 
     def __str__(self):
@@ -298,7 +303,7 @@ class Book(ValidatableModel):
 
     class Meta:
         verbose_name = 'Книга'
-        verbose_name_plural = 'Книги'
+        verbose_name_plural = '2. Книги'
         ordering = ['title']
 
     def __str__(self):
@@ -321,7 +326,7 @@ class Book(ValidatableModel):
 class Character(models.Model):
     is_main = models.BooleanField('Главный герой', default = False)
     character = models.ForeignKey(Person, on_delete = models.CASCADE)
-    book = models.ForeignKey(Book, on_delete = models.CASCADE)
+    book = models.ForeignKey(Book, on_delete = models.CASCADE, verbose_name='Книга')
     description = models.TextField('Описание', null = True, blank = True)
 
     class Meta:
@@ -363,7 +368,7 @@ class Movie(ValidatableModel):
 
     class Meta:
         verbose_name = 'Фильм'
-        verbose_name_plural = 'Фильмы'
+        verbose_name_plural = '3. Фильмы'
         ordering = ['title']
         unique_together = ['title', 'year']
 
@@ -389,9 +394,9 @@ class Movie(ValidatableModel):
 class Role(models.Model):
     is_main = models.BooleanField('Главный герой', default = False)
     description = models.TextField('Описание', null = True, blank = True)
-    movie = models.ForeignKey(Movie, related_name = 'roles', on_delete = models.CASCADE)
-    actor = models.ForeignKey(Person, related_name = 'roles', on_delete = models.CASCADE)
-    character = models.ForeignKey(Person, related_name = 'acted_by', on_delete = models.SET_NULL, null = True, blank = True)
+    movie = models.ForeignKey(Movie, related_name = 'roles', on_delete = models.CASCADE, verbose_name='Фильм')
+    actor = models.ForeignKey(Person, related_name = 'roles', on_delete = models.CASCADE, verbose_name='Актер')
+    character = models.ForeignKey(Person, related_name = 'acted_by', on_delete = models.SET_NULL, null = True, blank = True, verbose_name='Персонаж')
 
     class Meta:
         verbose_name = 'Роль'
@@ -416,7 +421,7 @@ class Cycle(models.Model):
 
     class Meta:
         verbose_name = 'Цикл'
-        verbose_name_plural = 'Циклы'
+        verbose_name_plural = '5. Циклы'
         ordering = ['title']
 
     def __str__(self):
@@ -427,8 +432,8 @@ class Cycle(models.Model):
 
 class Number(models.Model):
     cycle = models.ForeignKey(Cycle, on_delete = models.CASCADE)
-    book = models.ForeignKey(Book, on_delete = models.CASCADE, null = True, blank = True)
-    movie = models.ForeignKey(Movie, on_delete = models.CASCADE, null = True, blank = True)
+    book = models.ForeignKey(Book, on_delete = models.CASCADE, null = True, blank = True, verbose_name='Книга')
+    movie = models.ForeignKey(Movie, on_delete = models.CASCADE, null = True, blank = True, verbose_name='Фильм')
     number = models.PositiveIntegerField('Порядковый номер в серии')
 
     class Meta:
@@ -466,7 +471,7 @@ class Theme(ValidatableModel):
     title = models.CharField('Название', unique=True, max_length = 100)
     description = models.TextField('Описание', null = True, blank = True)
     creators = models.ManyToManyField(Person, related_name = 'created', blank = True)
-    cycles = models.ManyToManyField(Cycle, blank = True)
+    cycles = models.ManyToManyField(Cycle, blank = True, related_name='theme')
     books = models.ManyToManyField(Book, blank = True)
     movies = models.ManyToManyField(Movie, blank = True)
     favorited_by = models.ManyToManyField(AUTH_USER_MODEL, related_name='favorite_themes')
@@ -476,7 +481,7 @@ class Theme(ValidatableModel):
 
     class Meta:
         verbose_name = 'Тема'
-        verbose_name_plural = 'Темы'
+        verbose_name_plural = '1. Темы'
         ordering = ['id']
 
     def extras(self):
@@ -499,6 +504,7 @@ class Theme(ValidatableModel):
 
     def favorite_count(self):
         return self.favorited_by.distinct().count()
+    favorite_count.short_description = 'Избарнная тема'
 
     def get_question_to_ask(self, user):
         questions = self.theme_questions.all()

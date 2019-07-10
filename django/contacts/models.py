@@ -31,7 +31,7 @@ class Message(models.Model):
         return self.title
 
 class UserMessage(Message):
-    user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, related_name='messages')
+    user = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, related_name='messages', verbose_name='Зарегистрированный пользователь')
     message = models.OneToOneField(to=Message, on_delete=models.CASCADE, parent_link=True, related_name='reg_user')
 
     class Meta:
