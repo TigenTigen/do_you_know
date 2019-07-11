@@ -8,7 +8,6 @@ from contacts.forms import *
 from contacts.models import Message
 
 class MessageCreateView(CreateView):
-    success_url = reverse_lazy('contacts:message_list')
     template_name = 'contacts/message_create_form.html'
 
     def get_form_class(self):
