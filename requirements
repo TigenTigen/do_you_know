@@ -7,3 +7,4 @@ django-cleanup
 requests
 social-auth-app-django
 django-selectable
+coverage

@@ -42,10 +42,9 @@ class TestURLs(UniversalURLtest):
         self.assertEqual(resolved_url.func, add_to_faq)
 
 class TestViews_for_unauthenticated_user(TestCase):
-    client = Client()
-
-    def setUp(self):
-        self.category1 = Category.objects.create(title='category1')
+    @classmethod
+    def setUpTestData(cls):
+        cls.category1 = Category.objects.create(title='category1')
 
     def test_MessageListView_with_no_messages(self):
         response = self.client.get(reverse('contacts:message_list'))
@@ -116,7 +115,6 @@ class TestViews_for_unauthenticated_user(TestCase):
 
 class TestViews_for_authenticated_user(TestViews_for_unauthenticated_user):
     def setUp(self):
-        self.category1 = Category.objects.create(title='category1')
         self.user, created = AUTH_USER_MODEL.objects.get_or_create(username='testuser1')
         self.client.force_login(self.user)
 
@@ -152,7 +150,6 @@ class TestViews_for_authenticated_user(TestViews_for_unauthenticated_user):
 
 class TestViews_for_staff_user(TestViews_for_authenticated_user):
     def setUp(self):
-        self.category1 = Category.objects.create(title='category1')
         self.user, created = AUTH_USER_MODEL.objects.get_or_create(username='staff_user', is_staff=True)
         self.client.force_login(self.user)
 
@@ -222,3 +219,72 @@ class TestViews_for_staff_user(TestViews_for_authenticated_user):
             self.assertEqual(Reply.objects.count(), 1)
             self.assertEqual(Reply.objects.first().text, 'some_text')
             self.assertEqual(self.user.reply_set.count(), 1)
+
+    def test_add_to_faq_for_message_with_no_replies(self):
+        message = AnonymousMessage.objects.create(
+            name = 'AnonymousUser',
+            email = 'anon@test.com',
+            category = self.category1,
+            title = 'title',
+            text = 'some_text',
+        )
+        url = reverse('contacts:add_to_faq', args=[message.id])
+        response = self.client.get(url)
+        self.assertFalse(message.show_as_faq)
+
+    def test_add_to_faq(self):
+        # create message with reply
+        message = AnonymousMessage.objects.create(
+            name = 'AnonymousUser',
+            email = 'anon@test.com',
+            category = self.category1,
+            title = 'title',
+            text = 'some_text',
+        )
+        reply = Reply.objects.create(
+            message = message,
+            user = self.user,
+            text = 'test_reply_texr'
+        )
+        self.assertEqual(message.replies.count(), 1)
+        # move message to faq
+        url = reverse('contacts:add_to_faq', args=[message.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        # check faq page: message is displayed on faq page
+        response = self.client.get(reverse('contacts:faq'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed('contacts/faq.html')
+        self.assertContains(response, 'some_text', count=1)
+        self.assertEqual(response.context['object_list'].count(), 1)
+        updated_message = response.context['object_list'][0].anon
+        self.assertEqual(updated_message.id, message.id)
+        self.assertTrue(updated_message.show_as_faq)
+
+class TestModels(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user, created = AUTH_USER_MODEL.objects.get_or_create(username='test_user')
+        cls.category = Category.objects.create(title='test_category')
+
+    def test_category_str(self):
+        self.assertEqual(str(self.category), 'test_category')
+
+    def test_message_str(self):
+        message = Message.objects.create(title='test_title', text='test_text', category=self.category)
+        self.assertEqual(str(message), 'test_title')
+        self.assertIsNotNone(message.created)
+
+    def test_usermessage_str(self):
+        usermessage = UserMessage.objects.create(title='test_title', text='test_text', category=self.category, user=self.user)
+        self.assertEqual(str(usermessage), 'test_user (Пользователь)')
+
+    def test_anonymoususer_str(self):
+        anonmessage = AnonymousMessage.objects.create(
+            title = 'test_title',
+            text = 'test_text',
+            category = self.category,
+            name = 'test_name',
+            email = 'test_email',
+        )
+        self.assertEqual(str(anonmessage), 'test_name (Гость)')

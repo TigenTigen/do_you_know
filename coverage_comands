@@ -1,0 +1,5 @@
+contacts:
+
+coverage run --branch --source=contacts manage.py test -k
+coverage report
+overage html --skip-covered --omit='/home/tygen/Рабочий стол/django/do_you_know/django/contacts/readme.py'
