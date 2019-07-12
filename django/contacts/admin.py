@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.db import models
 from django import forms
-from contacts.models import *
+from contacts.models import Message, UserMessage, AnonymousMessage, Reply, Category
 
 class UserMessageInline(admin.StackedInline):
     model = UserMessage
@@ -73,3 +74,5 @@ class MessageAdmin(admin.ModelAdmin):
                 inlines.append(AnonymousMessageInline(self.model, self.admin_site))
         inlines.append(ReplyInline(self.model, self.admin_site))
         return tuple(inlines)
+
+admin.site.register(Category)
