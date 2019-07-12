@@ -1,12 +1,13 @@
-from django.conf import settings
+from user.models import AdvUser
 import factory
 
-class UserFactory(factory.DjangoModelFactory):
-    username = factory.Sequence(lambda n: 'user %d' %n)
-    password = 'unitest'
+class AdvUserFactory(factory.DjangoModelFactory):
+    username = factory.Sequence(lambda n: 'user {}'.format(n))
+    password = 'unittest'
+    email = factory.Sequence(lambda n: 'email_for_user_{}@factory.com'.format(n))
 
     class Meta:
-        model = settings.AUTH_USER_MODEL
+        model = AdvUser
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):

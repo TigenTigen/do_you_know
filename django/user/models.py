@@ -4,9 +4,9 @@ from django.conf import settings
 from django.core.signing import Signer
 from django.template import engines, Context
 from django.urls import reverse
-from django.db.models import Count, Sum, F, Avg
+from django.db.models import Sum
 from django.contrib.auth.models import UserManager
-
+from django.core import mail
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 signer = Signer()
@@ -33,10 +33,6 @@ class AdvUser(AbstractUser):
         ordering = ['-date_joined']
 
     def __str__(self):
-        if self.username.startswith('id'):
-            if self.first_name != '' and self.last_name != '':
-                self.username = '{} {}'.format(self.first_name, self.last_name)
-                self.save()
         return self.username
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -58,11 +54,14 @@ class AdvUser(AbstractUser):
         link = host + reverse('user:registration_confirmed', kwargs={'sign': sign})
         return Context({'confirmation_link': link})
 
-    def send_confirmation_email(self):
+    def send_confirmation_email(self, connection = None):
         context = self.get_email_context()
         text_body = dt_engine.get_template('emails/confirmation.txt').render(context=context)
         html_body = dt_engine.get_template('emails/confirmation.html').render(context=context)
-        self.email_user(subject='Подтверждение регистрации', message=text_body, html_message=html_body)
+        self.email_user(subject='Подтверждение регистрации', message=text_body, html_message=html_body, connection=connection)
+        # not None connection parameter is used during tests, see tests/test_models.py - test_send_confirmation_email
+        if connection:
+            return mail.outbox
 
     def social_count(self):
         return self.social_auth.count()
@@ -70,4 +69,4 @@ class AdvUser(AbstractUser):
     # questions
     def total_points_count(self):
         total_points_count = self.replies.aggregate(sum=models.Sum('points'))
-        return total_points_count['sum']
+        return total_points_count['sum'] or 0

@@ -8,3 +8,4 @@ requests
 social-auth-app-django
 django-selectable
 coverage
+factory-boy
