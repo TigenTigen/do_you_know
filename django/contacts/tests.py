@@ -6,6 +6,7 @@ from contacts.forms import *
 from contacts.models import *
 from config.universal_tests import UniversalURLtest
 from contacts.urls import urlpatterns
+from config.universal_tests import UniversalFormTest
 
 AUTH_USER_MODEL = get_user_model()
 
@@ -261,3 +262,63 @@ class TestModels(TestCase):
             email = 'test_email',
         )
         self.assertEqual(str(anonmessage), 'test_name (Гость)')
+
+class TestUserMessageForm(UniversalFormTest):
+    form_class = UserMessageForm
+    form_model_class = UserMessage
+
+    def get_valid_data_dict(self):
+        category, created = Category.objects.get_or_create(title='test_category')
+        user, created = AUTH_USER_MODEL.objects.get_or_create(username='test_user')
+        data_dict = {
+            'category': category.id,
+            'title': 'some_text',
+            'text': 'some_text',
+            'user': user.id,
+        }
+        return data_dict
+
+    def get_field_validation_check_dict(self):
+        field_validation_check_dict = {
+            'category': [None, '', 1, 'some_string'],
+            'title': [None, '', 1, 'some_string', 'some title'],
+        }
+        return field_validation_check_dict
+
+class TestAnonymousMessageForm(UniversalFormTest):
+    form_class = AnonymousMessageForm
+    form_model_class = AnonymousMessage
+
+    def get_valid_data_dict(self):
+        category, created = Category.objects.get_or_create(title='test_category')
+        data_dict = {
+            'category': category.id,
+            'title': 'some_text',
+            'text': 'some_text',
+            'name': 'some_text',
+            'email': 'some@email.com'
+        }
+        return data_dict
+
+    def get_field_validation_check_dict(self):
+        field_validation_check_dict = {
+            'category': [None, '', 1, 'some_string'],
+            'title': [None, '', 1, 'some_string', 'some title'],
+            'email': [None, '', 1, 'some_string', 'some string', 'some@email@com', 'some@email', 'some@email.com'],
+        }
+        return field_validation_check_dict
+
+class TestReplyForm(UniversalFormTest):
+    form_class = ReplyForm
+    form_model_class = Reply
+
+    def get_valid_data_dict(self):
+        category, created = Category.objects.get_or_create(title='test_category')
+        message, created = Message.objects.get_or_create(title='title', text='text', category=category)
+        user, created = AUTH_USER_MODEL.objects.get_or_create(username='test_user')
+        data_dict = {
+            'user': user.id,
+            'text': 'some_text',
+            'message': message.id,
+        }
+        return data_dict
