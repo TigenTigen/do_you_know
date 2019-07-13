@@ -4,42 +4,15 @@ from django.contrib.auth import get_user_model
 from contacts.views import *
 from contacts.forms import *
 from contacts.models import *
+from config.universal_tests import UniversalURLtest
+from contacts.urls import urlpatterns
 
 AUTH_USER_MODEL = get_user_model()
 
-class UniversalURLtest(SimpleTestCase):
-    simple_url_view_dict = {}
-    app_name = ''
-    namespace = ''
-
-    def test_resolve_url(self):
-        for url in self.simple_url_view_dict.keys():
-            resolved_url = resolve(reverse(self.namespace + ':' + url))
-            self.assertEqual(resolved_url.app_name, self.app_name)
-            self.assertEqual(resolved_url.namespace, self.namespace)
-            try:
-                self.assertEqual(resolved_url.func.view_class, self.simple_url_view_dict[url])
-            except:
-                self.assertEqual(resolved_url.func, self.simple_url_view_dict[url])
-
 class TestURLs(UniversalURLtest):
-    simple_url_view_dict = {
-        'message_list': MessageListView,
-        'message_create': MessageCreateView,
-        'faq': FAQListView,
-    }
     app_name = 'contacts'
     namespace = 'contacts'
-
-    def test_message_reply_resolve(self):
-        url = reverse('contacts:message_reply', args=[1])
-        resolved_url = resolve(url)
-        self.assertEqual(resolved_url.func.view_class, ReplyCreateView)
-
-    def test_add_to_faq_resolve(self):
-        url = reverse('contacts:add_to_faq', args=[1])
-        resolved_url = resolve(url)
-        self.assertEqual(resolved_url.func, add_to_faq)
+    urlpatterns = urlpatterns
 
 class TestViews_for_unauthenticated_user(TestCase):
     @classmethod
