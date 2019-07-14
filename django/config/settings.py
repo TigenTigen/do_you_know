@@ -142,7 +142,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # user settings
 INSTALLED_APPS = ['user.apps.UserConfig',] + INSTALLED_APPS
 AUTH_USER_MODEL = 'user.AdvUser'
-LOGIN_URL = 'accounts/login/' # адрес, ведущий на страницу входа
+LOGIN_URL = 'user:login' # адрес, ведущий на страницу входа
 LOGIN_REDIRECT_URL = 'main_page' # адрес, на который произойдет перенаправление после входа
 LOGOUT_REDIRECT_URL = 'main_page' # адрес, на который произойдет перенаправление после выхода
                            # если None, перенаправление не произойдет, будет выведена страница выхода с сайта

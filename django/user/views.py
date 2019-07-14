@@ -26,7 +26,7 @@ def registration_confirmation(request, sign):
         success = False
     return render(request, 'registration/registration_confirmed.html', context={'success': success})
 
-class ProfileView(TemplateView, LoginRequiredMixin):
+class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'registration/profile.html'
 
 class CustomPasswordResetView(PasswordResetView):
