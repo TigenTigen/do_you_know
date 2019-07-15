@@ -5,6 +5,19 @@ from core.models import *
 from core.lookups import *
 from django.core.exceptions import ValidationError
 
+def clean_string(string):
+    string = string.strip()
+    if string == '':
+        string = None
+    return string
+
+def clean_user_id(string):
+    if string:
+        string = int(string)
+        if string > 0:
+            return string
+    raise ValidationError('Ошибка в генерации формы. Пожалуйста обновите страницу и введите данные повторно')
+
 class ThemeForm(forms.ModelForm):
     class Meta:
         model = Theme
@@ -12,10 +25,10 @@ class ThemeForm(forms.ModelForm):
         widgets = {'created_by_user_id': forms.HiddenInput()}
 
     def clean_description(self):
-        description = self.cleaned_data.get('description')
-        if description == '':
-            description = None
-        return description
+        return clean_string(self.cleaned_data.get('description'))
+
+    def clean_created_by_user_id(self):
+        return clean_user_id(self.cleaned_data.get('created_by_user_id'))
 
 class ThemeAutoLookupForm(ThemeForm):
     title = forms.CharField(
@@ -32,10 +45,10 @@ class PersonForm(forms.ModelForm):
         widgets = {'created_by_user_id': forms.HiddenInput()}
 
     def clean_description(self):
-        description = self.cleaned_data.get('description')
-        if description == '':
-            description = None
-        return description
+        return clean_string(self.cleaned_data.get('description'))
+
+    def clean_created_by_user_id(self):
+        return clean_user_id(self.cleaned_data.get('created_by_user_id'))
 
     def self_processing(self, request, related_name, pk):
         if related_name == 'character':
@@ -92,6 +105,9 @@ class CharacterPersonForm(PersonAutoLookupForm):
     class Meta(PersonForm.Meta):
         fields = ('name', 'born', 'died', 'description', 'is_fictional', 'created_by_user_id', 'is_main', 'character_description')
 
+    def clean_character_description(self):
+        return clean_string(self.cleaned_data.get('character_description'))
+
 class ActorNameAutoLookupForm(forms.Form):
     actor_name = forms.CharField(
         label='Имя',
@@ -110,10 +126,18 @@ class BookForm(forms.ModelForm):
         widgets = {'created_by_user_id': forms.HiddenInput()}
 
     def clean_description(self):
-        description = self.cleaned_data.get('description')
-        if description == '':
-            description = None
-        return description
+        return clean_string(self.cleaned_data.get('description'))
+
+    def clean_created_by_user_id(self):
+        return clean_user_id(self.cleaned_data.get('created_by_user_id'))
+
+    def clean_number(self):
+        number = self.cleaned_data.get('number')
+        if number and number.isdigit():
+            number = int(number)
+            if number > 0:
+                return number
+        return None
 
 class BookAutoLookupForm(BookForm):
     title = forms.CharField(
@@ -133,10 +157,18 @@ class MovieForm(forms.ModelForm):
         widgets = {'created_by_user_id': forms.HiddenInput()}
 
     def clean_description(self):
-        description = self.cleaned_data.get('description')
-        if description == '':
-            description = None
-        return description
+        return clean_string(self.cleaned_data.get('description'))
+
+    def clean_created_by_user_id(self):
+        return clean_user_id(self.cleaned_data.get('created_by_user_id'))
+
+    def clean_number(self):
+        number = self.cleaned_data.get('number')
+        if number and number.isdigit():
+            number = int(number)
+            if number > 0:
+                return number
+        return None
 
 class MovieAutoLookupForm(MovieForm):
     title = forms.CharField(
@@ -153,10 +185,7 @@ class CycleForm(forms.ModelForm):
         widgets = {'description': forms.Textarea(attrs={'rows': 2})}
 
     def clean_description(self):
-        description = self.cleaned_data.get('description')
-        if description == '':
-            description = None
-        return description
+        return clean_string(self.cleaned_data.get('description'))
 
 class NumberForm(forms.ModelForm):
     class Meta:

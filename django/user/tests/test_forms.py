@@ -19,8 +19,14 @@ class TestForm(UniversalFormTest):
 
     def get_field_validation_check_dict(self):
         field_validation_check_dict = {
-            'email': [None, '', 1, 'some_string', 'some string', 'some@email@com', 'some@email', 'some@email.com'],
-            'username': [None, '', 1, 'some_username', 'some username'],
+            'username': {
+                'wrong_choices': [None, '', '  ', 'some title'],
+                'right_choices': [1, 'some_string'],
+            },
+            'email': {
+                'wrong_choices': [None, '', '  ', 1, 'some_string', 'some string', 'some@email@com', 'some@email'],
+                'right_choices': ['some@email.com'],
+            },
         }
         return field_validation_check_dict
 

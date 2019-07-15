@@ -26,7 +26,7 @@ urlpatterns = [
         #persons
     path('persons/', PersonList.as_view(), name='person_list'),
     path('persons/<int:pk>/', PersonDetail.as_view(), name='person_detail'),
-    path('persons/create/role/<int:pk>/', person_create_as_role, name='person_create_as_role'),
+    path('persons/role/create/<int:pk>/', person_create_as_role, name='person_create_as_role'),
     path('persons/create/<str:related_name>/<int:pk>/', person_create, name='person_create'),
     path('persons/validation/', ValidationPersonList.as_view(), name='person_list_validation'),
         #validation

@@ -280,8 +280,14 @@ class TestUserMessageForm(UniversalFormTest):
 
     def get_field_validation_check_dict(self):
         field_validation_check_dict = {
-            'category': [None, '', 1, 'some_string'],
-            'title': [None, '', 1, 'some_string', 'some title'],
+            'title': {
+                'wrong_choices': [None, '', '  ', ],
+                'right_choices': [1, 'some_string', 'some title'],
+            },
+            'text': {
+                'wrong_choices': [None, '', '  ', ],
+                'right_choices': [1, 'some_string', 'some string'],
+            },
         }
         return field_validation_check_dict
 
@@ -302,9 +308,18 @@ class TestAnonymousMessageForm(UniversalFormTest):
 
     def get_field_validation_check_dict(self):
         field_validation_check_dict = {
-            'category': [None, '', 1, 'some_string'],
-            'title': [None, '', 1, 'some_string', 'some title'],
-            'email': [None, '', 1, 'some_string', 'some string', 'some@email@com', 'some@email', 'some@email.com'],
+            'title': {
+                'wrong_choices': [None, '', '  '],
+                'right_choices': [1, 'some_string', 'some title'],
+            },
+            'text': {
+                'wrong_choices': [None, '', '  '],
+                'right_choices': [1, 'some_string', 'some string'],
+            },
+            'email': {
+                'wrong_choices': [None, '', '  ', 1, 'some_string', 'some string', 'some@email@com', 'some@email'],
+                'right_choices': ['some@email.com'],
+            },
         }
         return field_validation_check_dict
 

@@ -6,3 +6,7 @@ overage html --skip-covered --omit='/home/tygen/Рабочий стол/django/d
 user:
 coverage run --branch --source=user manage.py test user -k -v2
 coverage html -d 'user/tests/htmlcov/' --skip-covered --omit='/home/tygen/Рабочий стол/django/do_you_know/django/user/readme.py'
+
+core:
+coverage run --branch --source=core manage.py test core -k -v2
+coverage html -d 'core/tests/htmlcov/' --skip-covered --omit='/home/tygen/Рабочий стол/django/do_you_know/django/core/readme.py'

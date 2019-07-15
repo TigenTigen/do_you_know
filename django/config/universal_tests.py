@@ -64,6 +64,7 @@ class UniversalFormTest(TestCase):
     all_fields_are_required = False
     valid_data_dict = {}
     field_validation_check_dict = {}
+    error_count = 0
 
     @classmethod
     def setUpTestData(cls):
@@ -76,8 +77,11 @@ class UniversalFormTest(TestCase):
             self.form = self.form_class()
             self.valid_data_dict = self.get_valid_data_dict()
 
+    def tearDown(self):
+        self.assertEqual(self.error_count, 0)
+
     def get_valid_data_dict(self):
-        return self.get_valid_data_dict
+        return self.valid_data_dict
 
     def get_field_validation_check_dict(self):
         return self.field_validation_check_dict
@@ -86,12 +90,14 @@ class UniversalFormTest(TestCase):
         print(colored(message, 'green'))
 
     def red(self, message):
+        self.error_count = self.error_count + 1
         print(colored(message, 'red'))
 
     def cyan(self, message):
         print(colored(message, 'cyan'))
 
     def print_invalid_form_errors(self, form):
+        self.red('   !!!   INVALID FORM   !!!   ')
         if form.non_field_errors():
             print('   !!! form is invalid:  ', form.non_field_errors())
         for field in form:
@@ -105,17 +111,18 @@ class UniversalFormTest(TestCase):
             self.assertEqual(self.form.Meta.model, self.form_model_class)
 
     def test_fields(self):
-        if self.form_class:
+        if self.form_class and self.form_model_class:
             print('...')
             generated_fields = self.form.fields
             required_fields = self.form_class.Meta.fields
-            checked_fields = 0
-            for field in required_fields:
-                self.assertIn(field, generated_fields)
-                checked_fields = checked_fields + 1
-                self.green('   OK   field {} in generated_fields'.format(field))
-            self.assertEqual(checked_fields, len(required_fields))
-            self.green('   !!!   All {} required_fields are generated   !!!   '.format(checked_fields))
+            if type(required_fields) == list:
+                checked_fields = 0
+                for field in required_fields:
+                    self.assertIn(field, generated_fields)
+                    checked_fields = checked_fields + 1
+                    self.green('   OK   field {} in generated_fields'.format(field))
+                self.assertEqual(checked_fields, len(required_fields))
+                self.green('   !!!   All {} required_fields are generated   !!!   '.format(checked_fields))
 
     def test_required_fields(self):
         if self.all_fields_are_required:
@@ -125,7 +132,7 @@ class UniversalFormTest(TestCase):
             self.green('   !!!   All fields are required   !!!   ')
 
     def test_form_validation(self):
-        if self.form_class:
+        if self.form_class and self.valid_data_dict:
             print('...')
             data_dict = self.valid_data_dict
             form = self.form_class(data_dict)
@@ -136,16 +143,28 @@ class UniversalFormTest(TestCase):
                 self.print_invalid_form_errors(form)
 
     def test_field_validation(self):
+        '''
+         test checkes validation of data in field_validation_check_dict
+         field_validation_check_dict = {
+            ... ,
+            'field_name': {
+                'wrong_choices': [...],
+                'right_choices': [...],
+            },
+            ... ,
+        }
+        '''
+
         if self.form_class and self.field_validation_check_dict != {}:
             print ('...')
-            for field_name, wrong_choices in self.field_validation_check_dict.items():
+            for field_name, choices in self.field_validation_check_dict.items():
                 print('   ----------   Checking validation for field:   ', field_name)
                 data_dict = self.get_valid_data_dict()
-                for choice in wrong_choices:
+                for choice in choices['wrong_choices']:
                     data_dict.update({field_name: choice})
                     form = self.form_class(data_dict)
                     if form.is_valid():
-                        self.cyan('   !!!   Invalid value has broken through: {}'.format(choice))
+                        self.red('   !!!   Invalid value has broken through: {}'.format(choice))
                     else:
                         try:
                             self.assertFalse(form.is_valid())
@@ -154,13 +173,20 @@ class UniversalFormTest(TestCase):
                             except:
                                 self.assertNotEqual(form.cleaned_data[field_name], choice)
                             self.assertIsNotNone(form[field_name].errors)
-                            self.green('   OK   Invalid value has been cought: {}'.format(choice))
                         except:
-                            self.red('   !!!   Test failed   !!! Check form validation: ')
+                            self.red('   !!!   Invalid value has been cought: {}'.format(choice))
+                            self.red('   !!!   But test failed   !!! Check form validation: ')
                             self.print_invalid_form_errors(form)
+                for choice in choices['right_choices']:
+                    data_dict.update({field_name: choice})
+                    form = self.form_class(data_dict)
+                    if not form.is_valid():
+                        self.red('   !!!  Valid value has been cought: {}'.format(choice))
+                        self.red('   !!!   Test failed   !!! Check form validation: ')
+                        self.print_invalid_form_errors(form)
 
     def test_save_method_with_no_commit(self):
-        if self.form_class:
+        if self.form_class and self.form_model_class:
             data_dict = self.valid_data_dict
             form = self.form_class(data_dict)
             if form.is_valid():
@@ -168,7 +194,7 @@ class UniversalFormTest(TestCase):
                 self.assertIsNone(new_object.id)
 
     def test_save_method(self):
-        if self.form_class:
+        if self.form_class and self.form_model_class:
             data_dict = self.valid_data_dict
             form = self.form_class(data_dict)
             if form.is_valid():
