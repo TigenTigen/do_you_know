@@ -197,7 +197,7 @@ class ValidatableModel(models.Model):
         self.user_voted.add(user)
         if self.approve_score >= self.target():
             self.is_validated_by_users = True
-            self.validated = datetime.datetime.now()
+            self.validated = datetime.now()
         self.save()
 
     def disapproved(self, user):
@@ -272,7 +272,7 @@ class Person(ValidatableModel):
         return dict
 
     def get_absolute_url(self):
-        return '/core/persons/{}'.format(self.pk)
+        return '/core/persons/{}/'.format(self.pk)
 
     def model(self):
         return 'Person'
@@ -318,7 +318,7 @@ class Book(ValidatableModel):
         return dict
 
     def get_absolute_url(self):
-        return '/core/books/{}'.format(self.pk)
+        return '/core/books/{}/'.format(self.pk)
 
     def model(self):
         return 'Book'
@@ -386,7 +386,7 @@ class Movie(ValidatableModel):
         return dict
 
     def get_absolute_url(self):
-        return '/core/movies/{}'.format(self.pk)
+        return '/core/movies/{}/'.format(self.pk)
 
     def model(self):
         return 'Movie'
@@ -497,7 +497,7 @@ class Theme(ValidatableModel):
         return self.title
 
     def get_absolute_url(self):
-        return '/core/themes/{}'.format(self.pk)
+        return '/core/themes/{}/'.format(self.pk)
 
     def model(self):
         return 'Theme'
