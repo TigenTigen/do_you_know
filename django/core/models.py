@@ -51,7 +51,7 @@ class Question(models.Model):
         return self.text
 
     def get_absolute_url(self):
-        return '/core/questions/{}'.format(self.pk)
+        return '/core/questions/{}/'.format(self.pk)
 
     def right_answer(self):
         right_answer = self.answers.filter(is_right=True)
@@ -73,7 +73,7 @@ class Answer(models.Model):
     class Meta:
         verbose_name = 'Ответ'
         verbose_name_plural = 'Ответы'
-        ordering = ['question', 'text']
+        ordering = ['question__id', 'text']
 
     def __str__(self):
         return self.text
@@ -428,7 +428,7 @@ class Cycle(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return '/core/cycles/{}'.format(self.pk)
+        return '/core/cycles/{}/'.format(self.pk)
 
 class Number(models.Model):
     cycle = models.ForeignKey(Cycle, on_delete = models.CASCADE)
@@ -446,10 +446,11 @@ class Number(models.Model):
         return '{} #{}'.format(self.cycle, str(self.number))
 
     def object(self):
-        if self.book:
-            return self.book
-        if self.movie:
-            return self.movie
+        if not (self.book and self.movie):
+            if self.book:
+                return self.book
+            if self.movie:
+                return self.movie
         self.delete()
 
     def get_absolute_url(self):

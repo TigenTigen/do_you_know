@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user
-from core.models import Theme, Person, Book, Movie
-from core.factories import ThemeFactory, PersonFactory, BookFactory, MovieFactory
+from core.models import Theme, Person, Book, Movie, Question
+from core.factories import *
 from user.factories import AdvUserFactory
 from random import shuffle
 from datetime import datetime
@@ -155,6 +155,54 @@ class TestValidatedModel(TestCase):
                 else:
                     self.assertNotIn(instance, user_created)
 
+    def test_get_question_to_ask(self):
+        if self.model_factory:
+            user = AdvUserFactory()
+            instance = self.model_factory()
+            self.assertIsNone(instance.get_question_to_ask(user))
+            for i in range(30):
+                if i % 3 == 0:
+                    question = QuestionFactory(content_object = instance)
+                else:
+                    question = QuestionFactory(content_object = ThemeFactory())
+                if i % 4 == 0:
+                    question.user = user
+                    question.save()
+                elif i % 5 == 1:
+                    answer = AnswerFactory(question = question)
+                    ReplyFactory(question = question, user = user, answer = answer)
+            self.assertEqual(Question.objects.count(), 30)
+            self.assertTrue(instance.questions.count(), 10)
+            self.assertEqual(user.questions.count(), 8)
+            self.assertEqual(user.replies.count(), 5)
+            for i in range(10):
+                question = instance.get_question_to_ask(user)
+                self.assertIsNotNone(question)
+                self.assertEqual(question.content_object, instance)
+                self.assertNotEqual(question.user, user)
+                self.assertEqual(question.replies.filter(user=user).count(), 0)
+
+    def test_refresh_ratig(self):
+        if self.model_factory:
+            instance = self.model_factory()
+            # no rating reports
+            self.assertEqual(instance.rating, 0)
+            # one rating report
+            rating = RatingFactory(content_object = instance)
+            instance.refresh_ratig()
+            self.assertEqual(instance.rating, rating.value)
+            # many rating reports
+            sum = rating.value
+            for i in range(20):
+                if i % 2 == 0:
+                    rating = RatingFactory(content_object = instance)
+                    sum = sum + rating.value
+                else:
+                    RatingFactory(content_object = self.model_factory())
+            instance.refresh_ratig()
+            self.assertEqual(instance.ratings.count(), 11)
+            self.assertEqual(round(instance.rating, 2), round(sum/11, 2))
+
 class TestValidatedModelExtra(TestValidatedModel):
     absolute_url_pattern = None
     absolute_url_name = None
@@ -173,6 +221,9 @@ class TestValidatedModelExtra(TestValidatedModel):
 class TestThemeModel(TestValidatedModelExtra):
     model = Theme
     model_factory = ThemeFactory
+    absolute_url_pattern = '/core/themes/{}/'
+    absolute_url_name = 'theme_detail'
+    model_name = 'Theme'
 
     def test_meta_ordering(self):
         for i in range(10):
@@ -243,6 +294,42 @@ class TestThemeModel(TestValidatedModelExtra):
             else:
                 for one in ['creators', 'cycles', 'books', 'movies']:
                     self.assertEqual(theme._prefetched_objects_cache[one].count(), 0)
+
+    def test_get_question_to_ask(self):
+        user = AdvUserFactory()
+        theme = ThemeFactory()
+        book = BookFactory()
+        theme.books.add(book)
+        self.assertIsNone(theme.get_question_to_ask(user))
+        for i in range(30):
+            if i % 3 == 0:
+                question = QuestionFactory(content_object = theme)
+            elif i % 3 == 1:
+                question = QuestionFactory(content_object = book, theme = theme)
+            else:
+                question = QuestionFactory(content_object = ThemeFactory())
+            if i % 4 == 0:
+                question.user = user
+                question.save()
+            elif i % 5 == 1:
+                answer = AnswerFactory(question = question)
+                ReplyFactory(question = question, user = user, answer = answer)
+        self.assertEqual(Question.objects.count(), 30)
+        self.assertTrue(theme.questions.count(), 10)
+        self.assertTrue(book.questions.count(), 10)
+        self.assertTrue(theme.theme_questions.count(), 10)
+        self.assertEqual(user.questions.count(), 8)
+        self.assertEqual(user.replies.count(), 5)
+        for i in range(10):
+            question = theme.get_question_to_ask(user)
+            self.assertIsNotNone(question)
+            try:
+                self.assertEqual(question.content_object, theme)
+            except:
+                self.assertEqual(question.content_object, book)
+                self.assertEqual(question.theme, theme)
+            self.assertNotEqual(question.user, user)
+            self.assertEqual(question.replies.filter(user=user).count(), 0)
 
 class TestPersonModel(TestValidatedModelExtra):
     model = Person
