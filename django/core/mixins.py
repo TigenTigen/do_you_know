@@ -2,6 +2,7 @@ from django.views.generic.list import MultipleObjectMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 from core.models import Theme
 from img.forms import ImageForm
 
@@ -35,7 +36,7 @@ class ExtraContextSingleObjectMixin(SingleObjectMixin):
         return context
 
 class OrderingMultipleObjectMixin(MultipleObjectMixin):
-    template_name='core/common_list.html'
+    template_name = 'core/common_list.html'
     paginate_by = 10
 
     def get_card_type(self):
@@ -44,6 +45,8 @@ class OrderingMultipleObjectMixin(MultipleObjectMixin):
             if self.model == Theme:
                 return 'view_module'
             return 'view_list'
+        if not (card_type in ['view_list', 'view_module']):
+            raise Http404
         return card_type
 
     def get_order(self):
@@ -67,14 +70,16 @@ class OrderingMultipleObjectMixin(MultipleObjectMixin):
             "validated_incr": qs.order_by('validated'),
             "validated_decr": qs.order_by('-validated'),
         }
-        qs = ordering_dict[order]
-        return qs
+        if order in ordering_dict.keys():
+            return ordering_dict[order]
+        raise Http404
 
     def get_paginate_by(self, *args, **kwargs):
-        paginate_by = self.request.GET.get('paginate_by')
-        if not paginate_by:
-            return self.paginate_by
-        return int(paginate_by)
+        paginate_by = self.request.GET.get('paginate_by', self.paginate_by)
+        paginate_by = int(paginate_by)
+        if paginate_by in [10, 20, 30]:
+            return paginate_by
+        raise Http404
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
