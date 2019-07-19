@@ -53,6 +53,8 @@ def theme_create(request):
             new_object = form.save()
             ImageForm().cover_processing(request, 'Theme', new_object.id)
             return redirect(new_object.get_absolute_url())
+        else:
+            form = ThemeAutoLookupForm(request.POST, initial={'created_by_user_id': request.user.id})
     return render(request, 'core/theme_create.html', {'form': form, 'image_form': image_form})
 
 @login_required
@@ -69,7 +71,7 @@ def book_create(request, theme_id):
             theme.books.add(new_object)
             ImageForm().cover_processing(request, 'Book', new_object.id)
             number = form.cleaned_data.get('number')
-            if number.isdigit():
+            if number and str(number).isdigit():
                 new_cycle_title = request.POST.get('new_cycle_title')
                 if new_cycle_title and new_cycle_title != '':
                     form_dict = {'title': new_cycle_title, 'description': request.POST.get('new_cycle_description')}
@@ -105,7 +107,7 @@ def movie_create(request, theme_id):
             theme.movies.add(new_object)
             ImageForm().cover_processing(request, 'Movie', new_object.id)
             number = form.cleaned_data.get('number')
-            if number.isdigit():
+            if number and str(number).isdigit():
                 new_cycle_title = request.POST.get('new_cycle_title')
                 if new_cycle_title and new_cycle_title != '':
                     form_dict = {'title': new_cycle_title, 'description': request.POST.get('new_cycle_description')}

@@ -176,7 +176,10 @@ class ValidatableModel(models.Model):
         return 'text-muted'
 
     def user(self):
-        return AUTH_USER_MODEL.objects.get(id=self.created_by_user_id)
+        try:
+            return AUTH_USER_MODEL.objects.get(id=self.created_by_user_id)
+        except:
+            return None
     user.short_description = 'Пользователь, создавший данную страницу'
 
     def staff(self):
@@ -187,10 +190,11 @@ class ValidatableModel(models.Model):
         return 5
 
     def validated_by_staff(self, user):
-        self.is_validated_by_staff = True
-        self.validated = datetime.now()
-        self.validated_by_staff_id = user.id
-        self.save()
+        if user.is_staff:
+            self.is_validated_by_staff = True
+            self.validated = datetime.now()
+            self.validated_by_staff_id = user.id
+            self.save()
 
     def approved(self, user):
         self.approve_score = self.approve_score + 1
@@ -305,6 +309,7 @@ class Book(ValidatableModel):
         verbose_name = 'Книга'
         verbose_name_plural = '2. Книги'
         ordering = ['title']
+        unique_together = ['title', 'year']
 
     def __str__(self):
         if self.year:
