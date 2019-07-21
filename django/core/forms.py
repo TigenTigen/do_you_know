@@ -57,6 +57,7 @@ class PersonForm(forms.ModelForm):
             form = PersonAutoLookupForm(initial={'created_by_user_id': request.user.id})
         model_dict = {'creator': Theme, 'author': Book, 'character': Book, 'director': Movie, 'writer': Movie}
         superinstance = get_object_or_404(model_dict[related_name], pk=pk)
+        new_object = None
         if request.method == 'POST':
             name = request.POST.get('name')
             if name != '' and name:

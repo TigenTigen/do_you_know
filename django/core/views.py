@@ -101,7 +101,7 @@ def movie_create(request, theme_id):
     cycles = theme.cycles.all()
     cycle = None
     if request.method == 'POST':
-        form = MovieAutoLookupForm()
+        form = MovieAutoLookupForm(request.POST)
         if form.is_valid():
             new_object = form.save()
             theme.movies.add(new_object)
@@ -178,7 +178,7 @@ def person_create_as_role(request, pk):
                                     movie=movie,
                                     is_main=('is_main' in request.POST),
                                     description=request.POST.get('character_description'))
-        return redirect('core:movie_detail', pk=pk)
+                return redirect('core:movie_detail', pk=pk)
     context = {'actor_name_field': actor_name_field, 'character_form': character_form}
     return render(request, 'core/person_create_as_role.html', context)
 
