@@ -2,21 +2,21 @@
 
 {% block content %}
   {% for object in object_list %}
-  <div class="card my-4">
-    <div class="card-header">
-      <a href="{{object.get_absolute_url}}">{{object}}</a>
+    <div class="card my-4">
+      <div class="card-header">
+        <a href="{{object.get_absolute_url}}">{{object}}</a>
+      </div>
+      <div class="card-body">
+        <p class="card-text m-0">{{object.description|default_if_none:""}}</p>
+        {% for key, value in object.extras.items %}
+          <p class="card-text m-0">{{key}}: {{value|default_if_none:"-"}}</p>
+        {% endfor %}
+        <p class="card-text text-muted">{{object.user.username}}, {{object.proposed}}</p>
+      </div>
+      <div class="card-footer">
+        {% include 'core/validation_form.html' with already_voted=object.already_voted user_is_creator=object.user_is_creator %}
+      </div>
     </div>
-    <div class="card-body">
-      <p class="card-text m-0">{{object.description|default_if_none:""}}</p>
-      {% for key, value in object.extras.items %}
-        <p class="card-text m-0">{{key}}: {{value|default_if_none:"-"}}</p>
-      {% endfor %}
-      <p class="card-text text-muted">{{object.user.username}}, {{object.proposed}}</p>
-    </div>
-    <div class="card-footer">
-      {% include 'core/validation_form.html' with already_voted=object.already_voted user_is_creator=object.user_is_creator %}
-    </div>
-  </div>
   {% empty %}
     Данные отсутствуют
   {% endfor %}

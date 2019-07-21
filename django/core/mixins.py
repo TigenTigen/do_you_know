@@ -114,13 +114,14 @@ class OrderingMultipleObjectMixin(MultipleObjectMixin):
         return context
 
 class ValidationMultipleObjectMixin(MultipleObjectMixin, LoginRequiredMixin):
-    template_name='core/validation_list.html'
+    template_name = 'core/validation_list.html'
 
     def get_queryset(self, *args, **kwargs):
         model = self.model
         user = self.request.user
         qs = model.validation.current(user)
         if user.is_staff:
-            qs = qs.order_by('user_is_creator', '-proposed')
-        qs = qs.order_by('already_voted', '-approve_score')
+            qs = qs.order_by('-user_is_creator', '-proposed')
+        else:
+            qs = qs.order_by('already_voted', '-approve_score')
         return qs

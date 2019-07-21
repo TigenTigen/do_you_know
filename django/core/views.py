@@ -198,15 +198,16 @@ class ValidationPersonList(ValidationMultipleObjectMixin, ListView):
 @require_POST
 @login_required()
 def validation(request):
-    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
-    object = get_object_or_404(model, pk=request.POST.get('object_id'))
-    user = request.user
-    if 'staff_validation' in request.POST:
-        object.validated_by_staff(user)
-    elif 'user_approve' in request.POST:
-        object.approved(user)
-    elif 'user_disapprove' in request.POST:
-        object.disapproved(user)
+    if 'model' in request.POST:
+        model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+        object = get_object_or_404(model, pk=request.POST.get('object_id'))
+        user = request.user
+        if 'staff_validation' in request.POST:
+            object.validated_by_staff(user)
+        elif 'user_approve' in request.POST:
+            object.approved(user)
+        elif 'user_disapprove' in request.POST:
+            object.disapproved(user)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required()
