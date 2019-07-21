@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView, CreateView, RedirectView
 from django.views.decorators.http import require_POST
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.apps import apps
 from django.http import HttpResponseRedirect
@@ -226,7 +227,7 @@ def created_by_user(request):
     return render(request, 'core/created_by_user.html', {'created_by_user_dict': created_by_user_dict})
 
 # favorite_themes
-class FavouriteThemeList(ThemeList):
+class FavouriteThemeList(LoginRequiredMixin, ThemeList):
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
         model = self.model
