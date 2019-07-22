@@ -260,46 +260,47 @@ def favorite(request, pk):
 @require_POST
 @login_required()
 def rate(request):
-    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
-    object = get_object_or_404(model, pk=request.POST.get('object_id'))
-    user = request.user
-    value = int(request.POST.get('value'))
-    rating = object.ratings.filter(user_rated=user)
-    if rating.exists():
-        rating = rating.get()
-        rating.value = value
-        rating.save()
-    else:
-        user.ratings.create(value=value, content_object=object)
-    object.refresh_ratig()
+    if 'model' in request.POST:
+        model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+        object = get_object_or_404(model, pk=request.POST.get('object_id'))
+        user = request.user
+        value = int(request.POST.get('value'))
+        rating = object.ratings.filter(user_rated=user)
+        if rating.exists():
+            rating = rating.get()
+            rating.value = value
+            rating.save()
+        else:
+            user.ratings.create(value=value, content_object=object)
+        object.refresh_ratig()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 # questions
-@login_required
 @require_POST
+@login_required
 def create_question(request):
-    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
-    object = get_object_or_404(model, id=request.POST.get('object_id'))
-    text = request.POST.get('question_text')
-    if text and text != '':
-        new_question = object.questions.create(text=text, user=request.user)
-        if isinstance(object, Theme):
-            new_question.theme = object
-            new_question.save()
-        elif isinstance(object, Book) or isinstance(object, Movie):
-            for theme in object.theme_set.all():
-                new_question.theme = theme
-            new_question.save()
-        return redirect('core:add_answers', pk=new_question.pk)
-    else:
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    if 'model' in request.POST:
+        model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+        object = get_object_or_404(model, id=request.POST.get('object_id'))
+        text = request.POST.get('question_text')
+        if text and text != '':
+            new_question = object.questions.create(text=text, user=request.user)
+            if isinstance(object, Theme):
+                new_question.theme = object
+                new_question.save()
+            elif isinstance(object, Book) or isinstance(object, Movie):
+                for theme in object.theme_set.all():
+                    new_question.theme = theme
+                new_question.save()
+            return redirect('core:add_answers', pk=new_question.pk)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def add_answers(request, pk):
     question = get_object_or_404(Question, pk=pk)
     AnswerFormset = inlineformset_factory(Question, Answer, form=AnswerForm, formset=AnswerBaseFormSet, extra=4, can_delete=False)
     formset = AnswerFormset(instance=question)
-    if 'add' in request.POST:
+    if 'add' in request.POST and request.user == question.user:
         formset = AnswerFormset(request.POST, instance=question)
         if formset.is_valid():
             formset.save()
@@ -308,8 +309,7 @@ def add_answers(request, pk):
                 question.explanation = explanation
                 question.save()
             return redirect('core:question_detail', pk=pk)
-    context = {'formset': formset}
-    return render(request, 'questions/add_answers.html', context)
+    return render(request, 'questions/add_answers.html', {'formset': formset})
 
 class QuestionDetail(DetailView):
     model = Question
@@ -318,11 +318,11 @@ class QuestionDetail(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         user = self.request.user
-        object = self.object
-        reply = object.replies.filter(user=user)
-        if reply.exists():
-            context.update({'user_answer': reply.first().answer})
         if user.is_authenticated:
+            object = self.object
+            reply = object.replies.filter(user=user)
+            if reply.exists():
+                context.update({'user_answer': reply.first().answer})
             user_is_creator = (user == object.user)
             if user_is_creator:
                 context.update({'user_is_creator': True})
@@ -332,13 +332,15 @@ class QuestionDetail(DetailView):
                     context.update({'current_user_rating': user_rating.get().value})
         return context
 
-@login_required
 @require_POST
+@login_required
 def ask_question(request):
-    model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
-    object = get_object_or_404(model, pk=request.POST.get('object_id'))
-    question = object.get_question_to_ask(request.user)
-    return render(request, 'questions/ask.html', {'question': question})
+    if 'model' in request.POST:
+        model = apps.get_model(app_label='core', model_name=request.POST.get('model'), require_ready=True)
+        object = get_object_or_404(model, pk=request.POST.get('object_id'))
+        question = object.get_question_to_ask(request.user)
+        return render(request, 'questions/ask.html', {'question': question})
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def ask_similar_question(request, pk):
@@ -362,19 +364,19 @@ def check_answer(request, pk):
     checked_answer = request.POST.get('checked_answer')
     if checked_answer:
         checked_answer = get_object_or_404(Answer, pk=checked_answer)
-    if checked_answer in question.answers.all():
-        user = request.user
-        if user.is_authenticated:
-            reply = user.replies.create(
-                question = question,
-                answer = checked_answer,
-                outcome = checked_answer.is_right,
-                points = checked_answer.points(),
-            )
-            return redirect('core:reply_detail', pk=reply.id)
-        else:
-            context = {'question': question, 'answer': checked_answer}
-            return render(request, 'questions/wellcome_question_reply.html', context)
+        if checked_answer in question.answers.all():
+            user = request.user
+            if user.is_authenticated:
+                reply = user.replies.create(
+                    question = question,
+                    answer = checked_answer,
+                    outcome = checked_answer.is_right,
+                    points = checked_answer.points(),
+                )
+                return redirect('core:reply_detail', pk=reply.id)
+            else:
+                context = {'question': question, 'answer': checked_answer}
+                return render(request, 'questions/wellcome_question_reply.html', context)
     else:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -398,7 +400,7 @@ def get_answer(request, pk):
     question = reply.question
     return redirect('core:question_detail', pk=question.pk)
 
-class UserCreatedQuestionsListView(ListView):
+class UserCreatedQuestionsListView(LoginRequiredMixin, ListView):
     template_name = 'questions/created_by_user.html'
 
     def get_queryset(self, *args, **kwargs):

@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block sidebar %}
-  {% with themes=object.question.theme.all %}
+  {% with themes=question.theme.all %}
     {% if themes %}
       {% include 'layout/connected_theme_block.html' %}
     {% endif %}
@@ -17,7 +17,7 @@
   <hr>
   {% if answer.is_right %}
     <p class="text-success">Поздравляем, Вы выбрали правильный ответ -  "{{answer.text}}"!</p>
-    <p>Пояснения автора: {{object.question.explanation|default_if_none:" - "}}</p>
+    <p>Пояснения автора: {{question.explanation|default_if_none:" - "}}</p>
     <p>Статистика ответов:</p>
     <div class="my-2">
       {% for answer in question.answers.all %}
@@ -32,7 +32,7 @@
       {% endfor %}
     </div>
     <p class="text-muted">Всего ответов: {{question.replies.count}}</p>
-  {% elif object.outcome == False %}
+  {% elif answer.is_right == False %}
     <p>К сожалению, Вы выбрали неправильный ответ.</p>
     <button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#exampleModal">
       Узнать правильный ответ
@@ -47,12 +47,11 @@
             </button>
           </div>
           <div class="modal-body">
-            Перейдя на следующую страницу вы никогда больше не получите возможность
-            ответить на данный вопрос повторно.
+            Подобная возможность предоставляется только зарегистрированным пользователям.
           </div>
           <div class="modal-footer">
-            <a type="button" class="btn btn-success" href="{% url 'core:get_answer' pk=object.pk %}">
-              Хочу знать ответ!
+            <a type="button" class="btn btn-success" href="{% url 'user:registration' %}">
+              Регистрация
             </a>
           </div>
         </div>

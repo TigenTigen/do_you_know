@@ -109,6 +109,9 @@ class UserReplyRecord(models.Model):
         verbose_name_plural = 'Ответы пользователей на вопросы'
         unique_together = ['user', 'question', 'answer']
 
+    def get_absolute_url(self):
+        return '/core/questions/reply/{}/'.format(self.pk)
+
 class Rating(models.Model):
     value = models.PositiveSmallIntegerField('', default=0)
     user_rated = models.ForeignKey(to=AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ratings')
@@ -233,9 +236,9 @@ class ValidatableModel(models.Model):
 
     def get_question_to_ask(self, user):
         questions = self.questions.exclude(user=user).exclude(replies__user=user)
-        if not questions.exists():
-            return None
-        return questions.first()
+        if questions.exists():
+            return questions.first()
+        return None
 
 class PersonManager(models.Manager):
     def all_with_perfetch(self):
