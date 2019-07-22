@@ -3,7 +3,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.apps import apps
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import inlineformset_factory
 from django.contrib.auth import get_user_model
@@ -419,10 +419,11 @@ class UserListView(ListView):
         return qs
 
     def get_paginate_by(self, *args, **kwargs):
-        paginate_by = self.request.GET.get('paginate_by')
-        if not paginate_by:
-            return self.paginate_by
-        return int(paginate_by)
+        paginate_by = self.request.GET.get('paginate_by', self.paginate_by)
+        paginate_by = int(paginate_by)
+        if paginate_by in [10, 20, 30]:
+            return paginate_by
+        raise Http404
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

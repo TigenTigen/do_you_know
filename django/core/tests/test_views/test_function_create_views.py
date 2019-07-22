@@ -207,7 +207,7 @@ class Test_person_create(UniversalCreateViewTest):
         self.client.force_login(user)
         valid_data_dict = {'name': 'test_name', 'description': 'some_text', 'created_by_user_id': user.id}
         valid_data_dict.update(extra_data_dict)
-        response = self.client.post(self.url, valid_data_dict)
+        response = self.client.post(url, valid_data_dict)
         if response.status_code == 200:
             self.print_invalid_form_errors(response.context['form'])
         self.assertEqual(self.model.objects.count(), 1)
@@ -219,28 +219,85 @@ class Test_person_create(UniversalCreateViewTest):
 
     def test_post_creator(self):
         theme = ThemeFactory()
-        url = reverse('core:person_create', args = ['creator', theme.pk])
+        url = reverse('core:person_create', kwargs = {'related_name': 'creator', 'pk':theme.pk})
         self.make_post_response_with_valid_data(url)
+        self.assertEqual(theme.creators.count(), 1)
 
     def test_post_author(self):
         book = BookFactory()
-        url = reverse('core:person_create', args = ['author', book.pk])
+        url = reverse('core:person_create', kwargs = {'related_name': 'author', 'pk':book.pk})
         self.make_post_response_with_valid_data(url)
+        book = Book.objects.get(id = book.id)
+        self.assertIsNotNone(book.author)
 
     def test_post_character(self):
         book = BookFactory()
-        url = reverse('core:person_create', args = ['character', book.pk])
+        url = reverse('core:person_create', kwargs = {'related_name': 'character', 'pk':book.pk})
         self.make_post_response_with_valid_data(url)
+        self.assertEqual(book.characters.count(), 1)
 
     def test_post_director(self):
         movie = MovieFactory()
-        url = reverse('core:person_create', args = ['director', movie.pk])
+        url = reverse('core:person_create', kwargs = {'related_name': 'director', 'pk':movie.pk})
         self.make_post_response_with_valid_data(url)
+        movie = Movie.objects.get(id = movie.id)
+        self.assertIsNotNone(movie.director)
 
     def test_post_writer(self):
         movie = MovieFactory()
-        url = reverse('core:person_create', args = ['writer', movie.pk])
+        url = reverse('core:person_create', kwargs = {'related_name': 'writer', 'pk':movie.pk})
         self.make_post_response_with_valid_data(url)
+        movie = Movie.objects.get(id = movie.id)
+        self.assertIsNotNone(movie.writer)
+
+    def make_post_response_with_valid_data_with_existing_person(self, url, extra_data_dict = {}):
+        self.assertEqual(self.model.objects.count(), 0)
+        user = AdvUserFactory()
+        self.client.force_login(user)
+        person = PersonFactory()
+        valid_data_dict = {'name': person.name, 'created_by_user_id': user.id}
+        valid_data_dict.update(extra_data_dict)
+        response = self.client.post(url, valid_data_dict)
+        if response.status_code == 200:
+            self.print_invalid_form_errors(response.context['form'])
+        self.assertEqual(self.model.objects.count(), 1)
+        created_instance = self.model.objects.get()
+        self.assertEqual(created_instance.name, person.name)
+        self.assertIsNone(created_instance.born)
+        self.assertRedirects(response, created_instance.get_absolute_url())
+
+    def test_post_creator_with_existing_person(self):
+        theme = ThemeFactory()
+        url = reverse('core:person_create', args = ['creator', theme.pk])
+        self.make_post_response_with_valid_data_with_existing_person(url)
+        self.assertEqual(theme.creators.count(), 1)
+
+    def test_post_author_with_existing_person(self):
+        book = BookFactory()
+        url = reverse('core:person_create', args = ['author', book.pk])
+        self.make_post_response_with_valid_data_with_existing_person(url)
+        book = Book.objects.get(id = book.id)
+        self.assertIsNotNone(book.author)
+
+    def test_post_character_with_existing_person(self):
+        book = BookFactory()
+        url = reverse('core:person_create', args = ['character', book.pk])
+        self.make_post_response_with_valid_data_with_existing_person(url)
+        self.assertEqual(book.characters.count(), 1)
+
+    def test_post_director_with_existing_person(self):
+        movie = MovieFactory()
+        url = reverse('core:person_create', args = ['director', movie.pk])
+        self.make_post_response_with_valid_data_with_existing_person(url)
+        movie = Movie.objects.get(id = movie.id)
+        self.assertIsNotNone(movie.director)
+
+    def test_post_writer_with_existing_person(self):
+        movie = MovieFactory()
+        url = reverse('core:person_create', args = ['writer', movie.pk])
+        self.make_post_response_with_valid_data_with_existing_person(url)
+        movie = Movie.objects.get(id = movie.id)
+        self.assertIsNotNone(movie.writer)
 
 class Test_person_create_as_role(UniversalCreateViewTest):
     view_name = 'person_create_as_role'

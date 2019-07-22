@@ -43,15 +43,25 @@ class TestValidatedModel(TestCase):
         if self.model_factory:
             self.assertEqual(self.model_factory().target(), 5)
 
-    def test_validated_by_staff(self):
+    def test_validated_by_staff_with_staff_user(self):
         if self.model_factory:
-            user = AdvUserFactory()
+            user = AdvUserFactory(is_staff = True)
             instance = self.model_factory()
             instance.validated_by_staff(user)
             updated_instance = self.get_updated_instance(instance)
             self.assertTrue(updated_instance.is_validated_by_staff)
             self.assertIsNotNone(updated_instance.validated)
             self.assertEqual(updated_instance.validated_by_staff_id, user.id)
+
+    def test_validated_by_staff_with_not_staff_user(self):
+        if self.model_factory:
+            user = AdvUserFactory()
+            instance = self.model_factory()
+            instance.validated_by_staff(user)
+            updated_instance = self.get_updated_instance(instance)
+            self.assertFalse(updated_instance.is_validated_by_staff)
+            self.assertIsNone(updated_instance.validated)
+            self.assertNotEqual(updated_instance.validated_by_staff_id, user.id)
 
     def test_approved(self):
         if self.model_factory:
