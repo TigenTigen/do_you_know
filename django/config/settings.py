@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '37=6z_k6=jce#o1-ho*+snml236uaj8)6j^rcfr67kxtb6rh_('
+SECRET_KEY = get_secret(os.getenv('DJANGO_SK_FILE'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -152,13 +152,13 @@ LOGOUT_REDIRECT_URL = 'main_page' # адрес, на который произо
 
 # Mail settings (for registration confirmation emails)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'djangomailape@gmail.com'
-EMAIL_HOST_PASSWORD = 'letsspam'
+EMAIL_HOST = get_secret(os.getenv('DJANGO_EH_FILE'))
+EMAIL_HOST_USER = get_secret(os.getenv('DJANGO_EHU_FILE'))
+EMAIL_HOST_PASSWORD = get_secret(os.getenv('DJANGO_EHP_FILE'))
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'noreply@do_you_know.com'
-MAILING_LIST_LINK_DOMAIN = 'http://127.0.0.1:8000'
+MAILING_LIST_LINK_DOMAIN = 'http://' + ALLOWED_HOSTS[0]
 
 # social-django settings
 INSTALLED_APPS += ['social_django',]
