@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from .get_secret import get_secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +26,7 @@ SECRET_KEY = '37=6z_k6=jce#o1-ho*+snml236uaj8)6j^rcfr67kxtb6rh_('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.getenv('CONTAINER_IP')]
 
 
 # Application definition
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,10 +77,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'do_you_know',
-        'USER': 'postgres',
-        'PASSWORD': 'passwordforpostgresql',
-        'HOST': '127.0.0.1',
+        'NAME': get_secret(os.getenv('POSTGRES_DB_FILE')),
+        'USER': get_secret(os.getenv('POSTGRES_USER_FILE')),
+        'PASSWORD': get_secret(os.getenv('POSTGRES_PASSWORD_FILE')),
+        'HOST': 'postgres',
         'PORT': '5432',
         'ATOMIC_REQUEST': True,
         }
@@ -133,7 +134,7 @@ TIME_INPUT_FORMATS = ["%H:%M"]
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/tygen/Рабочий стол/django/do_you_know/django/static'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # crispy_forms settings:
 INSTALLED_APPS += ['crispy_forms',]
