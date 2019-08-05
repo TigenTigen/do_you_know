@@ -17,7 +17,7 @@
           <a href="{{character.get_absolute_url}}" class="{{character.character.color}}">{{character}}</a>
         </dt>
         <dd class="col-sm-9">
-          {{character.description}}
+          {{character.description|default_if_none:""}}
         </dd>
       {% endfor %}
     </dl>

@@ -234,6 +234,9 @@ class ValidatableModel(models.Model):
             return cover_img.get()
         return self.images.last()
 
+    def all_questions(self):
+        return self.questions.all()
+
     def get_question_to_ask(self, user):
         questions = self.questions.exclude(user=user).exclude(replies__user=user)
         if questions.exists():
@@ -514,6 +517,9 @@ class Theme(ValidatableModel):
     def favorite_count(self):
         return self.favorited_by.distinct().count()
     favorite_count.short_description = 'Избарнная тема'
+
+    def all_questions(self):
+        return self.theme_questions.all()
 
     def get_question_to_ask(self, user):
         questions = self.theme_questions.all()

@@ -24,6 +24,7 @@
             <a class="nav-link text-white" href="{% url 'user:logout' %}">Выход</a>
             {% if user.is_superuser %}
               <a class="nav-link text-white" href="/admin">Панель администратора</a>
+              <a class="nav-link text-white" href="{% url 'core:initiate_db_demo_data' %}">Загрузить демо данные</a>
             {% endif %}
           </div>
         {% else %}

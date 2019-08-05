@@ -76,7 +76,7 @@
         <p class="mt-2">
           Связанные темы:
           {% for theme in object.theme_set.all %}
-            <a href="{{theme.get_absolute_url}}" class="text-dark">{{theme}}</a>, 
+            <a href="{{theme.get_absolute_url}}" class="text-dark">{{theme}}</a>,
           {% empty %}
             -
           {% endfor %}
@@ -92,7 +92,7 @@
   {% block detail %}
   {% endblock detail %}
 
-  {% if object.questions.all %}
+  {% if object.all_questions %}
     <form class="" action="{% url 'core:ask_question' %}" method="post">
       {% csrf_token %}
       <input type="hidden" name="model" value="{{object.model}}">

@@ -47,4 +47,6 @@ urlpatterns = [
     path('questions/reply/<int:pk>/get_answer', get_answer, name='get_answer'),
         #user_rating
     path('ratings/users/', UserListView.as_view(), name='ratings_users'),
+        #over
+    path('initiate/', initiate_db_demo_data, name='initiate_db_demo_data')
 ]
