@@ -22,7 +22,7 @@ class ExtraContextSingleObjectMixin(SingleObjectMixin):
                 if user_rating.exists():
                     context.update({'current_user_rating': user_rating.get().value})
         context.update({'image_form': ImageForm()})
-        questions = object.questions.all()
+        questions = object.all_questions()
         if questions.exists() and user.is_authenticated:
             replied_questions = questions.filter(replies__user=user)
             created_questions = questions.filter(user=user)

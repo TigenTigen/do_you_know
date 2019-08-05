@@ -29,7 +29,7 @@
             <a href="{{role.character.get_absolute_url}}" class="{{role.character.color}}">{{role.character}}</a>
           </div>
           <div class="col">
-            {{role.description}}
+            {{role.description|default_if_none:""}}
           </div>
         </div>
       {% endfor %}

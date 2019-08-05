@@ -15,6 +15,13 @@ from core.mixins import *
 
 from img.forms import ImageForm
 
+def initiate_db_demo_data(request):
+    user = request.user
+    if user.is_superuser:
+        from core.db_demo_data import db_demo_data
+        db_demo_data(user)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 # base representaion of models
 class ThemeList(OrderingMultipleObjectMixin, ListView):
     model = Theme
