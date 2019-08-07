@@ -37,3 +37,15 @@ class ImageForm(forms.ModelForm):
         if new_image:
             new_image.is_cover = True
             new_image.save()
+
+    def demo_download_processing(self, object, url, user):
+        r = requests.get(url)
+        if r.status_code == 200:
+            file_data = {'image': SimpleUploadedFile('temp_image.jpg', r.content)}
+            image_form = ImageForm({'url': url}, file_data)
+            if image_form.is_valid():
+                new_image = image_form.save()
+                new_image.content_object = object
+                new_image.user = user
+                new_image.is_cover = True
+                new_image.save()

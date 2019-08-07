@@ -233,3 +233,20 @@ DEMO_QUESTIONS = {
         },
     },
 }
+
+DEMO_IMAGES_URL = {
+    'themes_images': {
+        'Звездные Войны': "http://cdn.shopify.com/s/files/1/0008/1274/4765/products/0-StarWars-Logo-bk_front_Single_Front.png?v=1534252271",
+    },
+    'movie_images': {
+        'Атака клонов': "https://upload.wikimedia.org/wikipedia/ru/thumb/a/ad/Star_Wars_Attack_of_the_Clones_poster.jpg/230px-Star_Wars_Attack_of_the_Clones_poster.jpg",
+        'Возвращение джедая': "https://upload.wikimedia.org/wikipedia/ru/thumb/b/b2/ReturnOfTheJediPoster1983.jpg/230px-ReturnOfTheJediPoster1983.jpg",
+        'Империя наносит ответный удар': "https://upload.wikimedia.org/wikipedia/ru/thumb/e/e0/Empire20strikes20back_old.jpg/230px-Empire20strikes20back_old.jpg",
+        'Месть ситхов': "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Star_Wars_Episode_III_Revenge_of_the_Sith_poster.jpg/220px-Star_Wars_Episode_III_Revenge_of_the_Sith_poster.jpg",
+        'Новая надежда': "https://upload.wikimedia.org/wikipedia/ru/thumb/8/87/StarWarsMoviePoster1977.jpg/230px-StarWarsMoviePoster1977.jpg",
+        'Последние джедаи': "https://upload.wikimedia.org/wikipedia/ru/thumb/2/23/%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B5%D0%94%D0%B6%D0%B5%D0%B4%D0%B0%D0%B8.jpg/267px-%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B5%D0%94%D0%B6%D0%B5%D0%B4%D0%B0%D0%B8.jpg",
+        'Пробуждение силы': "https://upload.wikimedia.org/wikipedia/ru/thumb/a/a8/%D0%97%D0%B2%D1%91%D0%B7%D0%B4%D0%BD%D1%8B%D0%B5_%D0%B2%D0%BE%D0%B9%D0%BD%D1%8B_%D0%9F%D1%80%D0%BE%D0%B1%D1%83%D0%B6%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5_%D1%81%D0%B8%D0%BB%D1%8B.jpg/267px-%D0%97%D0%B2%D1%91%D0%B7%D0%B4%D0%BD%D1%8B%D0%B5_%D0%B2%D0%BE%D0%B9%D0%BD%D1%8B_%D0%9F%D1%80%D0%BE%D0%B1%D1%83%D0%B6%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5_%D1%81%D0%B8%D0%BB%D1%8B.jpg",
+        'Скайуокер. Восход': "https://upload.wikimedia.org/wikipedia/ru/thumb/e/eb/Star_Wars_%E2%80%94_The_Rise_of_Skywalker_%28poster%29.jpg/267px-Star_Wars_%E2%80%94_The_Rise_of_Skywalker_%28poster%29.jpg",
+        'Скрытая угроза': "https://upload.wikimedia.org/wikipedia/ru/thumb/4/40/Star_Wars_Phantom_Menace_poster.jpg/230px-Star_Wars_Phantom_Menace_poster.jpg",
+    },
+}

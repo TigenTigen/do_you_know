@@ -229,3 +229,37 @@ DEMO_QUESTIONS = {
         },
     },
 }
+
+DEMO_IMAGES_URL = {
+    'themes_images': {
+        'Гарри Поттер': "https://www.logolynx.com/images/logolynx/51/518163e837a726e58cb3b182a96f9f0d.jpeg",
+    },
+    'book_images': {
+        'Гарри Поттер и Филосовский камень': 'https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Harry_Potter_and_the_Philosopher%27s_Stone_Book_Cover.jpg/220px-Harry_Potter_and_the_Philosopher%27s_Stone_Book_Cover.jpg',
+        'Гарри Поттер и Тайная Комната': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/5c/Harry_Potter_and_the_Chamber_of_Secrets.jpg/220px-Harry_Potter_and_the_Chamber_of_Secrets.jpg',
+        'Гарри Поттер и Узник Азкабана': 'https://upload.wikimedia.org/wikipedia/en/a/a0/Harry_Potter_and_the_Prisoner_of_Azkaban.jpg',
+        'Гарри Поттер и Орден Феникса': 'https://upload.wikimedia.org/wikipedia/en/thumb/7/70/Harry_Potter_and_the_Order_of_the_Phoenix.jpg/220px-Harry_Potter_and_the_Order_of_the_Phoenix.jpg',
+        'Гарри Поттер и Принц-Полукровка': 'https://upload.wikimedia.org/wikipedia/en/f/f0/Harry_Potter_and_the_Half-Blood_Prince.jpg',
+        'Гарри Поттер и Кубок Огня': 'https://upload.wikimedia.org/wikipedia/en/c/c7/Harry_Potter_and_the_Goblet_of_Fire.jpg',
+        'Гарри Поттер и Дары Смерти': 'https://upload.wikimedia.org/wikipedia/en/a/a9/Harry_Potter_and_the_Deathly_Hallows.jpg',
+    },
+    'movie_images': {
+        'Гарри Поттер и Филосовский камень': "https://upload.wikimedia.org/wikipedia/en/thumb/6/66/Hp1-americanposter.jpg/220px-Hp1-americanposter.jpg",
+        'Гарри Поттер и Тайная Комната': "https://upload.wikimedia.org/wikipedia/ru/thumb/0/0b/Harry_Potter_and_the_Chamber_of_Secrets_%E2%80%94_movie.jpg/267px-Harry_Potter_and_the_Chamber_of_Secrets_%E2%80%94_movie.jpg",
+        'Гарри Поттер и Узник Азкабана': "https://upload.wikimedia.org/wikipedia/ru/thumb/b/b2/Harry_Potter_and_the_Prisoner_of_Azkaban_%E2%80%94_movie.jpg/220px-Harry_Potter_and_the_Prisoner_of_Azkaban_%E2%80%94_movie.jpg",
+        'Гарри Поттер и Орден Феникса': "https://upload.wikimedia.org/wikipedia/ru/thumb/6/60/Harry_Potter_and_the_Order_of_the_Phoenix_%E2%80%94_movie.jpg/267px-Harry_Potter_and_the_Order_of_the_Phoenix_%E2%80%94_movie.jpg",
+        'Гарри Поттер и Принц-Полукровка': "https://upload.wikimedia.org/wikipedia/ru/thumb/8/82/Harry_Potter_and_the_Half-Blood_Prince_%E2%80%94_movie.jpg/267px-Harry_Potter_and_the_Half-Blood_Prince_%E2%80%94_movie.jpg",
+        'Гарри Поттер и Кубок Огня': "https://upload.wikimedia.org/wikipedia/ru/thumb/4/45/Harry_Potter_and_the_Goblet_of_Fire_%E2%80%94_movie.jpg/220px-Harry_Potter_and_the_Goblet_of_Fire_%E2%80%94_movie.jpg",
+        'Гарри Поттер и Дары Смерти (часть 1)': "https://upload.wikimedia.org/wikipedia/ru/thumb/9/98/Harry_Potter_and_the_Deathly_Hallows._Part_1_%E2%80%94_movie.jpg/267px-Harry_Potter_and_the_Deathly_Hallows._Part_1_%E2%80%94_movie.jpg",
+        'Гарри Поттер и Дары Смерти (часть 2)': "https://upload.wikimedia.org/wikipedia/en/d/df/Harry_Potter_and_the_Deathly_Hallows_%E2%80%93_Part_2.jpg",
+    },
+    'person_images': {
+        "Джоан Роулинг": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/J._K._Rowling_2010.jpg/267px-J._K._Rowling_2010.jpg",
+        "Гарри Поттер": "https://upload.wikimedia.org/wikipedia/az/thumb/e/e9/Harri_Potter.jpg/240px-Harri_Potter.jpg",
+        "Рон Уизли": "https://upload.wikimedia.org/wikipedia/ru/thumb/7/78/Grint-Weasley.jpg/222px-Grint-Weasley.jpg.png",
+        "Гермиона Грейнджер": "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Hermione_Granger_poster.jpg/220px-Hermione_Granger_poster.jpg",
+        "Дэниел Редклиф": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Daniel_Radcliffe_in_July_2015.jpg/220px-Daniel_Radcliffe_in_July_2015.jpg",
+        "Руперт Гринт": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Rupert_Grint_2011.jpg/200px-Rupert_Grint_2011.jpg",
+        "Эмма Уотсон": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Emma_Watson_2013.jpg/225px-Emma_Watson_2013.jpg",
+    },
+}
