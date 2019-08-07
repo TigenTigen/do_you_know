@@ -1,4 +1,5 @@
 from core.models import *
+from img.forms import ImageForm
 
 THEMES = {
     'theme1': {
@@ -78,6 +79,13 @@ QUESTIONS = {
     },
     'book_questions': {},
     'preson_questions': {},
+}
+
+IMAGES_URL = {
+    'themes_images': {},
+    'book_images': {},
+    'movie_images': {},
+    'person_images': {},
 }
 
 def create_person(dict, user):
@@ -236,14 +244,43 @@ def download_questions_dict(dict, user):
             question_dict = person_questions_dict.get(key)
             create_question(question_dict, person, user)
 
+def download_image_dict(dict, user):
+    theme_img_dict = dict.get('themes_images')
+    if theme_img_dict:
+        for key in theme_img_dict.keys():
+            theme = Theme.objects.get(title__iexact = key)
+            if not theme.images.exists():
+                ImageForm().demo_download_processing(theme, theme_img_dict.get(key), user)
+    book_img_dict = dict.get('book_images')
+    if book_img_dict:
+        for key in book_img_dict.keys():
+            book = Book.objects.get(title__iexact = key)
+            if not book.images.exists():
+                ImageForm().demo_download_processing(book, book_img_dict.get(key), user)
+    movie_img_dict = dict.get('movie_images')
+    if movie_img_dict:
+        for key in movie_img_dict.keys():
+            movie = Movie.objects.get(title__iexact = key)
+            if not movie.images.exists():
+                ImageForm().demo_download_processing(movie, movie_img_dict.get(key), user)
+    person_img_dict = dict.get('person_images')
+    if person_img_dict:
+        for key in person_img_dict.keys():
+            person = Person.objects.get(name__iexact = key)
+            if not person.images.exists():
+                ImageForm().demo_download_processing(person, person_img_dict.get(key), user)
+
 def db_demo_data(user):
-    from core.db_demo_data_dicts.star_wars import DEMO_THEMES, DEMO_PERSON_DEPENDENCES, DEMO_QUESTIONS
+    from core.db_demo_data_dicts.star_wars import DEMO_THEMES, DEMO_PERSON_DEPENDENCES, DEMO_QUESTIONS, DEMO_IMAGES_URL
     download_theme_dict(DEMO_THEMES, user)
     download_person_dict(DEMO_PERSON_DEPENDENCES, user)
     download_questions_dict(DEMO_QUESTIONS, user)
-    from core.db_demo_data_dicts.harry_potter import DEMO_THEMES, DEMO_PERSON_DEPENDENCES, DEMO_QUESTIONS
+    download_image_dict(DEMO_IMAGES_URL, user)
+    from core.db_demo_data_dicts.harry_potter import DEMO_THEMES, DEMO_PERSON_DEPENDENCES, DEMO_QUESTIONS, DEMO_IMAGES_URL
     download_theme_dict(DEMO_THEMES, user)
     download_person_dict(DEMO_PERSON_DEPENDENCES, user)
     download_questions_dict(DEMO_QUESTIONS, user)
-    from core.db_demo_data_dicts.game_of_thrones import DEMO_THEMES
+    download_image_dict(DEMO_IMAGES_URL, user)
+    from core.db_demo_data_dicts.game_of_thrones import DEMO_THEMES, DEMO_IMAGES_URL
     download_theme_dict(DEMO_THEMES, user)
+    download_image_dict(DEMO_IMAGES_URL, user)
