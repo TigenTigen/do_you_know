@@ -137,11 +137,6 @@ TIME_INPUT_FORMATS = ["%H:%M"]
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
-
-STATICFILES_DIRS = [
-    '/var/www/static/',
-]
-
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
 ]
