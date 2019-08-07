@@ -28,7 +28,7 @@ SECRET_KEY = get_secret(os.getenv('DJANGO_SK_FILE'))
 DEBUG = True
 
 CONTAINER_IP = socket.gethostbyname(socket.gethostname())
-ALLOWED_HOSTS = [CONTAINER_IP]
+ALLOWED_HOSTS = ['apache']
 
 
 # Application definition
@@ -136,7 +136,7 @@ TIME_INPUT_FORMATS = ["%H:%M"]
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = '/var/www/static/'
 
 # crispy_forms settings:
 INSTALLED_APPS += ['crispy_forms',]
@@ -184,7 +184,7 @@ INSTALLED_APPS += ['selectable',]
 
 # img settings
 INSTALLED_APPS += ['img.apps.ImgConfig', 'django_cleanup', 'easy_thumbnails', ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/var/www/media/'
 MEDIA_URL = '/media/'
 THUMBNAIL_BASEDIR = 'thumbnails'
 THUMBNAIL_ALIASES = {
