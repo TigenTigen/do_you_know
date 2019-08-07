@@ -30,7 +30,6 @@ DEBUG = False
 CONTAINER_IP = socket.gethostbyname(socket.gethostname())
 ALLOWED_HOSTS = ['apache']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -136,10 +135,7 @@ TIME_INPUT_FORMATS = ["%H:%M"]
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/static/'
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-]
+STATIC_ROOT = '/var/www/html/django_project/do_you_know/django/static/'
 
 # crispy_forms settings:
 INSTALLED_APPS += ['crispy_forms',]
