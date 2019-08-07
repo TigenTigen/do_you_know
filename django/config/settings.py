@@ -14,9 +14,6 @@ import os
 import socket
 from .get_secret import get_secret
 
-import mimetypes
-mimetypes.add_type("text/css", ".css", True)
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -28,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = get_secret(os.getenv('DJANGO_SK_FILE'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CONTAINER_IP = socket.gethostbyname(socket.gethostname())
 ALLOWED_HOSTS = ['apache']
