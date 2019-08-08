@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = get_secret(os.getenv('DJANGO_SK_FILE'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 CONTAINER_IP = socket.gethostbyname(socket.gethostname())
 ALLOWED_HOSTS = ['apache']
@@ -135,7 +135,7 @@ TIME_INPUT_FORMATS = ["%H:%M"]
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/html/django_project/do_you_know/django/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # crispy_forms settings:
 INSTALLED_APPS += ['crispy_forms',]
