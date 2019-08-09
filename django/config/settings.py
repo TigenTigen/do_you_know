@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = get_secret(os.getenv('DJANGO_SK_FILE'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 CONTAINER_IP = socket.gethostbyname(socket.gethostname())
 ALLOWED_HOSTS = ['apache']
