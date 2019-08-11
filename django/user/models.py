@@ -1,14 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
 from django.core.signing import Signer
 from django.template import engines, Context
 from django.urls import reverse
 from django.db.models import Sum
 from django.contrib.auth.models import UserManager
 from django.core import mail
+import os
 
-ALLOWED_HOSTS = settings.ALLOWED_HOSTS
+HOST_IP = os.getenv('HOST_IP')
 signer = Signer()
 dt_engine = engines['django'].engine
 
@@ -46,10 +46,7 @@ class AdvUser(AbstractUser):
         self.save()
 
     def get_email_context(self):
-        if ALLOWED_HOSTS and ALLOWED_HOSTS != []:
-            host = 'http://' + ALLOWED_HOSTS[0]
-        else:
-            host = 'http://localhost:8000'
+        host = 'http://' + HOST_IP
         sign = signer.sign(self.username)
         link = host + reverse('user:registration_confirmed', kwargs={'sign': sign})
         return Context({'confirmation_link': link})
