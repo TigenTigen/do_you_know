@@ -17,7 +17,7 @@
         <button type="submit" class="btn btn-success d-inline-block">Войти</button>
         <a href="{% url 'user:password_reset' %}" class="btn btn-success">Забыли пароль?</a>
         <a href="{% url 'social:begin' 'vk-oauth2' %}" class="btn btn-primary">Войти через Вконтакте</a>
-        <a href="{% url 'social:begin' 'google-oauth2' redirect_uri='http://li2051-57.members.linode.com/social/complete/google-oauth2/' %}" class="btn btn-primary">Войти через Google</a>
+        <a href="{% url 'social:begin' provider='google-oauth2' redirect_uri='http://li2051-57.members.linode.com/social/complete/google-oauth2/' %}" class="btn btn-primary">Войти через Google</a>
 	<a href="{% url 'social:begin' 'github-oauth' %}" class="btn btn-primary">Войти через Github</a>
       </div>
     </form>
