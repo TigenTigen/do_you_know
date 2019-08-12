@@ -6,9 +6,10 @@ from django.urls import reverse
 from django.db.models import Sum
 from django.contrib.auth.models import UserManager
 from django.core import mail
+from django.contrib.postgres.fields import CIEmailField
 import os
 
-HOST_IP = os.getenv('HOST_IP')
+HOST_NAME = os.getenv('HOST_NAME')
 signer = Signer()
 dt_engine = engines['django'].engine
 
@@ -25,6 +26,8 @@ class AdvUserManager(UserManager):
         return qs
 
 class AdvUser(AbstractUser):
+    email = CIEmailField('email address', null = True)
+
     objects = AdvUserManager()
 
     class Meta(AbstractUser.Meta):
@@ -52,7 +55,7 @@ class AdvUser(AbstractUser):
         self.save()
 
     def get_email_context(self):
-        host = 'http://' + HOST_IP
+        host = 'http://' + HOST_NAME
         sign = signer.sign(self.username)
         link = host + reverse('user:registration_confirmed', kwargs={'sign': sign})
         return Context({'confirmation_link': link})
