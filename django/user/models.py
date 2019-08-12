@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.db.models import Sum
 from django.contrib.auth.models import UserManager
 from django.core import mail
-from django.contrib.postgres.fields import CIEmailField
 import os
 
 HOST_NAME = os.getenv('HOST_NAME')
@@ -26,8 +25,6 @@ class AdvUserManager(UserManager):
         return qs
 
 class AdvUser(AbstractUser):
-    email = CIEmailField('email address', null = True)
-
     objects = AdvUserManager()
 
     class Meta(AbstractUser.Meta):
@@ -44,8 +41,11 @@ class AdvUser(AbstractUser):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         is_new = self._state.adding or force_insert
-        if self.email and self.email.strip() == '':
-            self.email = None
+        if self.email:
+            if self.email.strip() == '':
+                self.email = None
+            else:
+                self.email = self.email.lower()
         if is_new and self.username.startswith('id'):
             self.username = '{} {}'.format(self.first_name, self.last_name)
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
