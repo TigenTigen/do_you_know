@@ -17,6 +17,8 @@
         <button type="submit" class="btn btn-success d-inline-block">Войти</button>
         <a href="{% url 'user:password_reset' %}" class="btn btn-success">Забыли пароль?</a>
         <a href="{% url 'social:begin' 'vk-oauth2' %}" class="btn btn-primary">Войти через Вконтакте</a>
+        <a href="{% url 'social:begin' 'google-oauth2' %}">Войти через Google</a>
+	<a href="{% url 'social:begin' 'github-oauth2' %}">Войти через Github</a>
       </div>
     </form>
   {% endif %}

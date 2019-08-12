@@ -166,14 +166,25 @@ TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_proc
 TEMPLATES[0]['OPTIONS']['context_processors'].append('social_django.context_processors.login_redirect')
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.vk.VKOAuth2',                 # for vk
+    'social_core.backends.google.GoogleOAuth2',         # for google
+    'social_core.backends.github.GithubOAuth2',         # for github
     'django.contrib.auth.backends.ModelBackend',
 )
 
 # ... for vk:
-SOCIAL_AUTH_VK_OAUTH2_KEY = '7031159'
-SOCIAL_AUTH_VK_OAUTH2_SECRET = 'cJRcIxvV9xLPtgg84UeE'
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7093319'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 's6mUCsqlFYVYLXIlN4EJ'
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
+# ... for google:
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '577047278879-cftnt0lpvja2h3ubovle246v6d1h24sn.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'L8yzhFt7gwze1GAeo6dGxBnj'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
+
+# ... for github:
+SOCIAL_AUTH_GITHUB_KEY = '16ea26f48cacab2451b2'
+SOCIAL_AUTH_GITHUB_SECRET = '0739d91b1746bc98ad69fb6ae74ffb1d1d502d8b'
+SOCIAL_AUTH_GITHUB_SCOPE = ['email']
 
 # core settings:
 INSTALLED_APPS = ['core.apps.CoreConfig',] + INSTALLED_APPS
