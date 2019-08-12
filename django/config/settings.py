@@ -174,6 +174,19 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://li2051-57.members.linode.com'
 SOCIAL_AUTH_SANITIZE_REDIRECTS = False
 USE_X_FORWARDED_HOST = True
 
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',  # <--- enable this one
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
 # ... for vk:
 SOCIAL_AUTH_VK_OAUTH2_KEY = '7093319'
 SOCIAL_AUTH_VK_OAUTH2_SECRET = 's6mUCsqlFYVYLXIlN4EJ'
