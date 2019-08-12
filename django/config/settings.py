@@ -28,7 +28,7 @@ SECRET_KEY = get_secret(os.getenv('DJANGO_SK_FILE'))
 DEBUG = True
 
 CONTAINER_IP = socket.gethostbyname(socket.gethostname())
-ALLOWED_HOSTS = ['apache']
+ALLOWED_HOSTS = ['apache', os.getenv('HOST_NAME'), os.getenv('HOST_IP')]
 
 # Application definition
 
