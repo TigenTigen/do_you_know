@@ -179,9 +179,6 @@ SOCIAL_AUTH_VK_OAUTH2_KEY = '7093319'
 SOCIAL_AUTH_VK_OAUTH2_SECRET = 's6mUCsqlFYVYLXIlN4EJ'
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
-
-https://oauth.vk.com/authorize?client_id=7093319&redirect_uri=http%3A//li2051-57.members.linode.com/social/complete/vk-oauth2/%3Fredirect_state%3DbEFnu932I8bz8SpkbOWXImeQfw5gBho9&state=bEFnu932I8bz8SpkbOWXImeQfw5gBho9&response_type=code&scope=email
-
 # ... for google:
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '577047278879-nud66sl0gadqf63sf4sdkg91svpii3ok.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'mRq8xGDyY6yoIMY4wZvMmejp'
