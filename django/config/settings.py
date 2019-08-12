@@ -177,8 +177,8 @@ SOCIAL_AUTH_VK_OAUTH2_SECRET = 's6mUCsqlFYVYLXIlN4EJ'
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 # ... for google:
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '577047278879-cftnt0lpvja2h3ubovle246v6d1h24sn.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'L8yzhFt7gwze1GAeo6dGxBnj'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '577047278879-hng1pc1rp9kic14i8bcvib3k5ukvmhg8.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '7ArWfptDiDZAXTFm5cshGVpm'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email']
 
 # ... for github:
