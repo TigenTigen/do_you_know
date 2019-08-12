@@ -31,12 +31,18 @@ class AdvUser(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи (расширенная модель)'
         ordering = ['-date_joined']
+        unique_together = ['email']
 
     def __str__(self):
+        if (not self.username or self.username == '') and self.first_name and self.last_name:
+           self.username = '{} {}'.format(self.first_name, self.last_name)
+           self.save()
         return self.username
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         is_new = self._state.adding or force_insert
+        if self.email and self.email.strip() == '':
+            self.email = None
         if is_new and self.username.startswith('id'):
             self.username = '{} {}'.format(self.first_name, self.last_name)
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
