@@ -170,6 +170,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',         # for github
     'django.contrib.auth.backends.ModelBackend',
 )
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 # ... for vk:
 SOCIAL_AUTH_VK_OAUTH2_KEY = '7093319'
