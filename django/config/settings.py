@@ -170,7 +170,8 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',         # for github
     'django.contrib.auth.backends.ModelBackend',
 )
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'http://li2051-57.members.linode.com'
+SOCIAL_AUTH_SANITIZE_REDIRECTS = False
 
 # ... for vk:
 SOCIAL_AUTH_VK_OAUTH2_KEY = '7093319'
