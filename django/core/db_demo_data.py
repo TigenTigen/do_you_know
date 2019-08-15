@@ -271,6 +271,10 @@ def download_image_dict(dict, user):
                 ImageForm().demo_download_processing(person, person_img_dict.get(key), user)
 
 def db_demo_data(user):
+    from contacts.models import Category
+    category, created = Category.objects.get_or_create(title='Пожелания и предложения')
+    category, created = Category.objects.get_or_create(title='Вопросы по работе сайта')
+    category, created = Category.objects.get_or_create(title='Вопросы по содержанию сайта')
     from core.db_demo_data_dicts.star_wars import DEMO_THEMES, DEMO_PERSON_DEPENDENCES, DEMO_QUESTIONS, DEMO_IMAGES_URL
     download_theme_dict(DEMO_THEMES, user)
     download_person_dict(DEMO_PERSON_DEPENDENCES, user)
